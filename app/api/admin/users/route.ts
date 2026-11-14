@@ -34,11 +34,11 @@ function validRole(value: unknown): value is "admin" | "corretor" {
 function messageFrom(cause: unknown) {
   return cause instanceof Error ? cause.message : typeof cause === "object" && cause !== null && "message" in cause ? String(cause.message) : "Não foi possível concluir a operação.";
 }
-async function recordAction(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, action: string, details: Record<string, unknown>) {
+async function recordAction(supabase: ReturnType<typeof createSupabaseClient>, userId: string, action: string, details: Record<string, unknown>) {
   const { error } = await supabase.rpc("record_user_admin_action", { target_user_id: userId, action_name: action, details });
   if (error) throw error;
 }
-async function recordActionWarning(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, action: string, details: Record<string, unknown>) {
+async function recordActionWarning(supabase: ReturnType<typeof createSupabaseClient>, userId: string, action: string, details: Record<string, unknown>) {
   try { await recordAction(supabase,userId,action,details);return undefined; }
   catch (cause) { return messageFrom(cause); }
 }
