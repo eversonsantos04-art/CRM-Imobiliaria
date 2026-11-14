@@ -34,11 +34,13 @@ function validRole(value: unknown): value is "admin" | "corretor" {
 function messageFrom(cause: unknown) {
   return cause instanceof Error ? cause.message : typeof cause === "object" && cause !== null && "message" in cause ? String(cause.message) : "Não foi possível concluir a operação.";
 }
-async function recordAction(supabase: ReturnType<typeof createSupabaseClient>, userId: string, action: string, details: Record<string, unknown>) {
-  const { error } = await supabase.rpc("record_user_admin_action", { target_user_id: userId, action_name: action, details });
+async function recordAction(supabase: unknown, userId: string, action: string, details: Record<string, unknown>) {
+  // O cliente Supabase não tem o tipo gerado do schema, então tipamos só esta chamada RPC.
+  const rpc = (supabase as ReturnType<typeof createSupabaseClient>).rpc as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+  const { error } = await rpc("record_user_admin_action", { target_user_id: userId, action_name: action, details });
   if (error) throw error;
 }
-async function recordActionWarning(supabase: ReturnType<typeof createSupabaseClient>, userId: string, action: string, details: Record<string, unknown>) {
+async function recordActionWarning(supabase: unknown, userId: string, action: string, details: Record<string, unknown>) {
   try { await recordAction(supabase,userId,action,details);return undefined; }
   catch (cause) { return messageFrom(cause); }
 }
@@ -195,7 +197,8 @@ export async function PATCH(request: Request) {
         const activeIds = new Set(allUsers.users.filter(user => user.id !== id && (!user.banned_until || Date.parse(user.banned_until) <= Date.now())).map(user => user.id));
         if ((adminProfiles ?? []).filter(profile => profile.id !== id && !profile.disabled_at && activeIds.has(profile.id)).length === 0) return NextResponse.json({ error: "Mantenha ao menos uma conta administradora ativa." }, { status: 400 });
       }
-      const { error: prepareError } = await session.supabase.rpc("prepare_user_for_deletion", { target_user_id: id, replacement_user_id: replacementId });
+      const rpc = session.supabase.rpc as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+      const { error: prepareError } = await rpc("prepare_user_for_deletion", { target_user_id: id, replacement_user_id: replacementId });
       if (prepareError) throw prepareError;
       const { error: deleteError } = await session.admin.auth.admin.deleteUser(id);
       if (deleteError) throw deleteError;
