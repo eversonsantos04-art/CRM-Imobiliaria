@@ -1,0 +1,39 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.19.0
+2 info using node@v24.20.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\.npmrc
+5 silly config load:file:C:\Users\Home\.npmrc
+6 silly config load:file:C:\Users\Home\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" ".\\work\\npm-cache" "--no-audit" "--no-fund"
+9 verbose logfile logs-max:10 dir:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_22_02_903Z-
+10 verbose logfile C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_22_02_903Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+13 silly idealTree buildDeps
+14 silly fetch manifest cross-env@latest
+15 silly packumentCache full:https://registry.npmjs.org/cross-env cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/cross-env 294ms (cache miss)
+17 silly packumentCache full:https://registry.npmjs.org/cross-env set size:undefined disposed:false
+18 silly placeDep ROOT cross-env@10.1.0 OK for: crm-imobiliaria@0.1.0 want: latest
+19 silly fetch manifest @epic-web/invariant@^1.0.0
+20 silly packumentCache full:https://registry.npmjs.org/@epic-web%2finvariant cache-miss
+21 http fetch GET 200 https://registry.npmjs.org/@epic-web%2finvariant 59ms (cache miss)
+22 silly packumentCache full:https://registry.npmjs.org/@epic-web%2finvariant set size:undefined disposed:false
+23 silly placeDep ROOT @epic-web/invariant@1.0.0 OK for: cross-env@10.1.0 want: ^1.0.0
+24 silly reify moves {}
+25 http cache @epic-web/invariant@https://registry.npmjs.org/@epic-web/invariant/-/invariant-1.0.0.tgz 0ms (cache hit)
+26 http cache cross-env@https://registry.npmjs.org/cross-env/-/cross-env-10.1.0.tgz 0ms (cache hit)
+27 silly tarball no local data for @epic-web/invariant@https://registry.npmjs.org/@epic-web/invariant/-/invariant-1.0.0.tgz. Extracting by manifest.
+28 silly tarball no local data for cross-env@https://registry.npmjs.org/cross-env/-/cross-env-10.1.0.tgz. Extracting by manifest.
+29 http fetch GET 200 https://registry.npmjs.org/@epic-web/invariant/-/invariant-1.0.0.tgz 134ms (cache miss)
+30 http fetch GET 200 https://registry.npmjs.org/cross-env/-/cross-env-10.1.0.tgz 262ms (cache miss)
+31 silly ADD node_modules/@epic-web/invariant
+32 silly ADD node_modules/cross-env
+33 verbose cwd C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e
+34 verbose os Windows_NT 10.0.19045
+35 verbose node v24.20.0
+36 verbose npm  v11.19.0
+37 verbose exit 0
+38 info ok

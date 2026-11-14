@@ -1,0 +1,57 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.19.0
+2 info using node@v24.20.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\.npmrc
+5 silly config load:file:C:\Users\Home\.npmrc
+6 silly config load:file:C:\Users\Home\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install @next/swc-win32-x64-msvc@16.4.6
+8 verbose argv "install" "--force" "--no-save" "@next/swc-win32-x64-msvc@16.4.6" "--cache" ".\\work\\npm-cache" "--no-audit" "--no-fund"
+9 verbose logfile logs-max:10 dir:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_47_47_083Z-
+10 verbose logfile C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_47_47_083Z-debug-0.log
+11 warn using --force Recommended protections disabled.
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+14 silly idealTree buildDeps
+15 silly fetch manifest @next/swc-win32-x64-msvc@16.4.6
+16 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-win32-x64-msvc cache-miss
+17 http fetch GET https://registry.npmjs.org/@next%2fswc-win32-x64-msvc attempt 1 failed with EACCES
+18 http fetch GET https://registry.npmjs.org/@next%2fswc-win32-x64-msvc attempt 2 failed with EACCES
+19 http fetch GET https://registry.npmjs.org/@next%2fswc-win32-x64-msvc attempt 3 failed with EACCES
+20 silly placeDep ROOT @next/swc-win32-x64-msvc@ REPLACE for: crm-imobiliaria@0.1.0 want: 16.4.6
+21 verbose type system
+22 verbose stack FetchError: request to https://registry.npmjs.org/@next%2fswc-win32-x64-msvc failed, reason: 
+22 verbose stack     at ClientRequest.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\minipass-fetch\lib\index.js:130:14)
+22 verbose stack     at ClientRequest.emit (node:events:514:28)
+22 verbose stack     at emitErrorEvent (node:_http_client:114:11)
+22 verbose stack     at _destroy (node:_http_client:1167:9)
+22 verbose stack     at onSocketNT (node:_http_client:1188:5)
+22 verbose stack     at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+23 error code EACCES
+24 error errno EACCES
+25 error FetchError: request to https://registry.npmjs.org/@next%2fswc-win32-x64-msvc failed, reason: 
+25 error     at ClientRequest.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\minipass-fetch\lib\index.js:130:14)
+25 error     at ClientRequest.emit (node:events:514:28)
+25 error     at emitErrorEvent (node:_http_client:114:11)
+25 error     at _destroy (node:_http_client:1167:9)
+25 error     at onSocketNT (node:_http_client:1188:5)
+25 error     at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+25 error   code: 'EACCES',
+25 error   errno: 'EACCES',
+25 error   type: 'system',
+25 error   requiredBy: '.'
+25 error }
+26 error
+26 error The operation was rejected by your operating system.
+26 error It's possible that the file was already in use (by a text editor or antivirus), or that you lack permissions to access it.
+26 error
+26 error If you believe this might be a permissions issue, please double-check the permissions of the file and its containing directories, or try running the command again as root/Administrator.
+27 silly unfinished npm timer reify 1794678468510
+28 silly unfinished npm timer reify:loadTrees 1794678468511
+29 verbose cwd C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e
+30 verbose os Windows_NT 10.0.19045
+31 verbose node v24.20.0
+32 verbose npm  v11.19.0
+33 verbose exit 1
+34 verbose code 1
+35 error A complete log of this run can be found in: C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_47_47_083Z-debug-0.log

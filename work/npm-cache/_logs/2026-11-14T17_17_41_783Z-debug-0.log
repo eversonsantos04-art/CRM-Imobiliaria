@@ -1,0 +1,22 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.19.0
+2 info using node@v24.20.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\.npmrc
+5 silly config load:file:C:\Users\Home\.npmrc
+6 silly config load:file:C:\Users\Home\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--force" "--cache" ".\\work\\npm-cache" "--no-audit" "--no-fund"
+9 verbose logfile logs-max:10 dir:C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_17_41_783Z-
+10 verbose logfile C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e\work\npm-cache\_logs\2026-11-14T17_17_41_783Z-debug-0.log
+11 warn using --force Recommended protections disabled.
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:4496293888 maxSize:1124073472 maxEntrySize:562036736
+14 silly idealTree buildDeps
+15 silly reify moves {}
+16 verbose cwd C:\Users\Home\Documents\Codex\2026-11-14\prompt-crm-imobili-rio-clientes-e
+17 verbose os Windows_NT 10.0.19045
+18 verbose node v24.20.0
+19 verbose npm  v11.19.0
+20 verbose exit 0
+21 info ok
