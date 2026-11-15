@@ -225,7 +225,7 @@ export function PropertyForm({ property, photos: initialPhotos, documents: initi
     <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold">Fotos</h2><p className="mt-1 text-sm text-[var(--muted)]">{photos.length} de 8 fotos. A primeira enviada vira a capa.</p></div></div>
       {photos.length > 0 && <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">{photos.map((photo,index)=><div key={photo.id} className="overflow-hidden rounded-xl border border-[var(--line)]">
-        {photo.url ? <img src={photo.url} alt="Foto do imóvel" className="h-32 w-full object-cover" /> : <div className="h-32 bg-[var(--canvas)]" />}
+        {photo.url ? <img src={photo.url} alt="Foto do imóvel" loading="lazy" className="h-32 w-full object-cover" /> : <div className="h-32 bg-[var(--canvas)]" />}
         <div className="space-y-2 p-2"><p className="text-xs font-medium">{photo.is_cover?"Capa":`Foto ${index+1}`}</p>
         <div className="flex gap-1"><button type="button" disabled={busy||index===0} onClick={()=>void savePhotoOrder(photos.map((item,i)=>i===index?photos[index-1]:i===index-1?photos[index]:item))} className="rounded border px-2 py-1 text-xs disabled:opacity-40" aria-label="Mover foto para cima">↑</button>
         <button type="button" disabled={busy||index===photos.length-1} onClick={()=>void savePhotoOrder(photos.map((item,i)=>i===index?photos[index+1]:i===index+1?photos[index]:item))} className="rounded border px-2 py-1 text-xs disabled:opacity-40" aria-label="Mover foto para baixo">↓</button>

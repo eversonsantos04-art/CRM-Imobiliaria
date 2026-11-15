@@ -1,55 +1,34 @@
-# Integração do site com imóveis disponíveis
+# Vitrine pública ligada ao CRM
 
-O banco já cria a view pública `public_available_properties`. Ela retorna somente imóveis com status `disponivel` e os campos de anúncio necessários para uma vitrine. Não consulta `properties` diretamente e não inclui CPF, dados do proprietário, corretor responsável, endereço completo, documentos ou dados internos.
+A vitrine está no mesmo projeto Next.js do CRM. Ela usa a rota `/` para o catálogo e `/anuncio/[id]` para os detalhes; o painel interno continua em `/login` e nas rotas administrativas existentes.
 
-## Acesso
+## Dados dos anúncios
 
-Use a URL do projeto Supabase e a chave pública `publishable` (ou `anon`, em projetos que ainda usam as chaves antigas) no site. Essa chave pode ficar no navegador; nunca coloque a chave `secret` ou `service_role` no frontend.
+A vitrine lê somente a view `public_available_properties`, que contém os campos de anúncio e inclui apenas imóveis com status `disponivel`. Não consulte `properties` diretamente no site. A view não inclui CPF, dados do proprietário, corretor responsável, endereço completo ou documentos.
 
-O schema inicial já concede leitura da view para `anon` e `authenticated`. Se o schema inicial foi executado antes da inclusão da view, execute no SQL Editor:
+O schema inicial já concede leitura da view para `anon` e `authenticated`. Se a view não existir no projeto Supabase, execute o SQL de criação correspondente em `outputs/001_initial_schema.sql` ou use o SQL Editor do Supabase para aplicar a migração equivalente.
 
-```sql
-create or replace view public.public_available_properties with (security_barrier=true) as
-select id, internal_code, title, description, property_type, purpose,
-       neighborhood, city, state, sale_price, rent_price, condo_fee,
-       property_tax, total_area, built_area, bedrooms, suites, bathrooms,
-       parking_spaces, created_at, updated_at
-from public.properties
-where status = 'disponivel';
+## Fotos privadas
 
-revoke all on public.public_available_properties from public, anon, authenticated;
-grant select on public.public_available_properties to anon, authenticated;
-```
+As fotos continuam no bucket privado `property-photos`; o bucket `property-documents` também permanece privado. O servidor primeiro obtém os imóveis liberados pela view pública, depois busca e assina somente as fotos desses imóveis. Os links assinados duram uma hora. O navegador nunca recebe a chave `service_role` e a vitrine nunca consulta nem disponibiliza `property_documents`.
 
-## Exemplo em JavaScript/TypeScript
+Configure `SUPABASE_SERVICE_ROLE_KEY` somente nas variáveis de ambiente do servidor local e da Vercel, sem o prefixo `NEXT_PUBLIC_`. A chave publishable pode continuar no frontend. Sem a chave de serviço, os anúncios ainda podem aparecer, mas as fotos privadas não serão exibidas.
 
-Instale `@supabase/supabase-js` no projeto do site e configure `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` com os valores do Supabase:
+## Atendimento
 
-```ts
-import { createClient } from "@supabase/supabase-js";
+`NEXT_PUBLIC_WHATSAPP_NUMBER` é opcional. Quando configurada, deve conter o telefone público com código do país e DDD, somente números (por exemplo, `5511999999999`). Sem esse valor, a vitrine não mostra um contato com destinatário inventado.
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-);
+## Busca e compartilhamento
 
-const { data, error } = await supabase
-  .from("public_available_properties")
-  .select("id, internal_code, title, description, property_type, purpose, neighborhood, city, state, sale_price, rent_price, total_area, bedrooms, suites, bathrooms, parking_spaces")
-  .order("created_at", { ascending: false })
-  .range(0, 19); // primeiros 20 itens
+O site gera `/sitemap.xml` com a página inicial e somente os imóveis liberados pela view pública; `/robots.txt` aponta para o sitemap e evita indexar as rotas do CRM. Configure `NEXT_PUBLIC_SITE_URL` com a URL principal completa do site (incluindo `https://`) nas variáveis locais e da Vercel. A URL também é usada nos metadados canônicos e de compartilhamento dos anúncios.
 
-if (error) throw error;
-```
+## Temas visuais
 
-Filtros podem ser encadeados antes do `order`, por exemplo `.eq("property_type", "apartamento")`, `.eq("purpose", "venda")`, `.gte("sale_price", 200000)` e `.ilike("neighborhood", "%centro%")`. Para paginação, use intervalos sem sobreposição: página 1 `.range(0, 19)`, página 2 `.range(20, 39)`.
+O tema claro com as cores atuais da identidade visual é o padrão. O botão do cabeçalho alterna entre claro, escuro e a paleta preta/dourada derivada do logo. A escolha fica salva no navegador e só afeta as páginas públicas da vitrine.
 
-## Campos retornados
+## Segurança e publicação
 
-`id`, `internal_code`, `title`, `description`, `property_type`, `purpose`, `neighborhood`, `city`, `state`, `sale_price`, `rent_price`, `condo_fee`, `property_tax`, `total_area`, `built_area`, `bedrooms`, `suites`, `bathrooms`, `parking_spaces`, `created_at` e `updated_at`.
-
-Fotos e documentos continuam privados no Storage e não são publicados por esta view. Para mostrar fotos no site, será necessário preparar uma forma separada de publicação das imagens, sem tornar o bucket inteiro público.
-
-## Conferência
-
-Faça uma consulta sem login e confirme que somente imóveis disponíveis aparecem. Depois altere um imóvel para reservado e confirme que ele deixa de aparecer. A view pública não permite inserir, atualizar ou excluir dados.
+- Revise a view pública no Supabase antes de publicar e confirme que ela só retorna campos apropriados para anúncios.
+- Nunca torne público o bucket `property-photos` ou `property-documents`.
+- Mantenha `SUPABASE_SERVICE_ROLE_KEY` como variável somente do servidor na Vercel.
+- Altere um imóvel para reservado e confirme que ele deixa de aparecer no catálogo e que sua página pública deixa de abrir.

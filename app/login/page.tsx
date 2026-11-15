@@ -32,7 +32,7 @@ function LoginForm() {
       setBusy(false);
     }
   }
-  return <main className="flex min-h-screen items-center justify-center px-4 py-10"><section className="w-full max-w-md rounded-3xl border border-[var(--line)] bg-white p-7 shadow-sm sm:p-9">
+  return <main className="crm-auth-page flex min-h-screen items-center justify-center px-4 py-10"><section className="crm-auth-card w-full max-w-md rounded-3xl border border-[var(--line)] bg-white p-7 shadow-sm sm:p-9">
     <p className="mb-3 text-sm font-semibold uppercase tracking-[.18em] text-[var(--green)]">CRM Imobiliária</p><h1 className="text-3xl font-semibold">Acesse sua conta</h1><p className="mt-2 text-sm text-[var(--muted)]">Entre com seu e-mail e senha.</p>
     <form onSubmit={submit} className="mt-7 space-y-5">
       <label className="block text-sm font-medium">E-mail<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"/></label>

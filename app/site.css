@@ -1,0 +1,577 @@
+.estate-site {
+  --estate-ink: #17312b;
+  --estate-forest: #183c34;
+  --estate-leaf: #456c5d;
+  --estate-muted: #6f7d75;
+  --estate-gold: #d7a944;
+  --estate-gold-soft: #f4e7c6;
+  --estate-paper: #fbfaf6;
+  --estate-line: #e7e8e0;
+  --estate-white: #fff;
+  color: var(--estate-ink);
+  background: var(--estate-paper);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.estate-site *, .estate-site *::before, .estate-site *::after { box-sizing: border-box; }
+.estate-site a { color: inherit; text-decoration: none; }
+.estate-site button, .estate-site input, .estate-site select { font: inherit; }
+.estate-site h1, .estate-site h2, .estate-site h3, .estate-site p, .estate-site figure { margin: 0; }
+.estate-site h1, .estate-site h2, .estate-site h3 { font-family: "Sora", "Inter", system-ui, sans-serif; line-height: 1.18; letter-spacing: -.01em; }
+.estate-container { width: min(1220px, calc(100% - 56px)); margin-inline: auto; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+.estate-header { position: relative; z-index: 2; background: #050606; border-bottom: 1px solid rgba(215,169,68,.26); }
+.estate-header__inner { height: 84px; display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+.estate-brand { display: inline-flex; align-items: center; width: min(200px, 25vw); flex: 0 0 auto; }
+.estate-brand img { display: block; width: 100%; height: auto; object-fit: contain; }
+.estate-nav { display: flex; align-items: center; gap: 6px; margin-left: auto; margin-right: 18px; color: #e6e3d8; font-size: .93rem; font-weight: 600; }
+.estate-nav a { padding: .55rem .85rem; border-radius: 10px; }
+.estate-nav a, .estate-footer a { transition: color .18s ease; }
+.estate-nav a:hover, .estate-footer a:hover { color: var(--estate-gold); }
+.estate-theme-toggle { display: grid; width: 40px; height: 40px; flex: 0 0 auto; place-items: center; border: 1px solid #725c2f; border-radius: 50%; background: transparent; color: #eabd60; cursor: pointer; transition: background .18s ease, border-color .18s ease, color .18s ease; }
+.estate-theme-toggle:hover { border-color: #eabd60; background: #211a0e; }
+.estate-theme-toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+.estate-theme-toggle__moon { display: none; }
+.estate-theme-toggle__palette { display: none; }
+html[data-estate-theme="dark"] .estate-theme-toggle__sun { display: none; }
+html[data-estate-theme="dark"] .estate-theme-toggle__moon { display: block; }
+html[data-estate-theme="logo"] .estate-theme-toggle__sun,
+html[data-estate-theme="logo"] .estate-theme-toggle__moon { display: none; }
+html[data-estate-theme="logo"] .estate-theme-toggle__palette { display: block; }
+.estate-header__action { display: inline-flex; align-items: center; gap: 12px; padding: 12px 17px; border: 1px solid #725c2f; border-radius: 3px; color: #eabd60; font-size: .87rem; font-weight: 600; letter-spacing: 0; transition: background .18s ease, border-color .18s ease; }
+.estate-header__action:hover { background: #211a0e; border-color: #eabd60; }
+.estate-header__action span { color: var(--estate-gold); font-size: 15px; }
+
+.estate-hero { position: relative; padding: 76px 0 91px; background: var(--estate-paper); }
+.estate-hero__grid { display: grid; grid-template-columns: minmax(0, .96fr) minmax(360px, 1.04fr); align-items: center; gap: clamp(42px, 7vw, 100px); }
+.estate-hero__content { padding: 18px 0 30px; }
+.estate-eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #9b752c; font-size: .78rem; font-weight: 700; letter-spacing: .12em; line-height: 1.4; text-transform: uppercase; }
+.estate-eyebrow__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--estate-gold); box-shadow: 0 0 0 4px rgba(215,169,68,.14); }
+.estate-hero h1 { max-width: 620px; margin-top: 21px; color: var(--estate-forest); font-size: clamp(43px, 5.4vw, 72px); font-weight: 500; line-height: 1.04; letter-spacing: -.065em; }
+.estate-hero h1 em { color: var(--estate-gold); font-style: normal; }
+.estate-hero__content > p { max-width: 485px; margin-top: 23px; color: #66756e; font-size: 16px; line-height: 1.75; }
+.estate-hero__actions { display: flex; align-items: center; gap: 27px; margin-top: 31px; }
+.estate-button { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 16px; padding: 0 24px; border: 1px solid var(--estate-forest); border-radius: 10px; background: var(--estate-forest); color: #fff !important; font-size: .95rem; font-weight: 600; letter-spacing: 0; transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+.estate-button:hover { transform: translateY(-2px); background: #244d42; border-color: #244d42; }
+.estate-button:active { transform: translateY(0); }
+.estate-button span { color: #e9c779; font-size: 16px; }
+.estate-text-link { color: var(--estate-forest); font-size: .93rem; font-weight: 600; }
+.estate-text-link span { margin-left: 5px; color: var(--estate-gold); }
+.estate-hero__note { display: flex; align-items: center; gap: 11px; margin-top: 50px; color: #78837c; font-size: 11px; }
+.estate-hero__note-mark { display: grid; width: 25px; height: 25px; place-items: center; border: 1px solid #d9bd7a; border-radius: 50%; color: #a27c30; font-size: 13px; }
+.estate-hero__visual { position: relative; min-height: 470px; height: min(45vw, 585px); max-height: 585px; }
+.estate-hero__visual::before { position: absolute; z-index: 0; top: -22px; right: -22px; width: 58%; height: 66%; border: 1px solid rgba(215,169,68,.55); content: ""; }
+.estate-hero__visual > img { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.estate-hero__visual::after { position: absolute; z-index: 1; inset: 35% 0 0; background: linear-gradient(transparent, rgba(16,36,30,.66)); content: ""; pointer-events: none; }
+.estate-hero__image-caption { position: absolute; z-index: 2; right: 30px; bottom: 28px; left: 30px; display: flex; flex-direction: column; color: #fff; }
+.estate-hero__image-caption span { color: #f2d997; font-size: 9px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; }
+.estate-hero__image-caption strong { max-width: 320px; margin-top: 7px; font-family: "Sora", Inter, sans-serif; font-size: 21px; font-weight: 500; line-height: 1.3; }
+.estate-hero__seal { position: absolute; z-index: 3; top: 28px; left: -35px; display: flex; width: 82px; height: 82px; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(215,169,68,.75); border-radius: 50%; background: var(--estate-paper); color: var(--estate-forest); font-family: "Sora", sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2; text-align: center; transform: rotate(-11deg); }
+.estate-hero__seal i { position: absolute; top: -6px; right: 8px; color: var(--estate-gold); font-size: 19px; font-style: normal; }
+.estate-scroll-cue { position: absolute; bottom: 26px; left: max(28px, calc((100% - 1220px)/2)); display: flex; align-items: center; gap: 9px; color: #87918a !important; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.estate-scroll-cue span { width: 29px; height: 1px; background: #cdb36d; }
+
+.estate-listings { padding: 36px 0 105px; background: #fff; }
+.estate-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 32px; }
+.estate-section-heading h2, .estate-about h2, .estate-cta h2 { margin-top: 10px; color: var(--estate-forest); font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 600; }
+.estate-section-heading p { margin-top: 10px; color: var(--estate-muted); font-size: .95rem; }
+.estate-results-count { padding-bottom: 5px; color: #7e8a82; font-size: .9rem; }
+.estate-filters { display: grid; grid-template-columns: minmax(210px, 1.5fr) repeat(3, minmax(140px, .8fr)) auto; align-items: center; gap: 8px; margin-bottom: 29px; padding: 10px; border: 1px solid var(--estate-line); background: #fbfbf8; }
+.estate-filters label { min-width: 0; }
+.estate-filters select, .estate-search-field input { width: 100%; height: 43px; padding: 0 14px; border: 0; border-radius: 0; outline: 0; background: transparent; color: var(--estate-ink); font-size: .95rem; }
+.estate-filters select { border-left: 1px solid var(--estate-line); cursor: pointer; }
+.estate-search-field { display: flex; align-items: center; gap: 9px; padding-left: 8px; }
+.estate-search-field svg { width: 17px; height: 17px; flex: 0 0 auto; stroke: #8f9b92; stroke-width: 1.5; }
+.estate-search-field input::placeholder { color: #9aa39d; }
+.estate-reset { padding: 8px 10px; border: 0; background: transparent; color: #68776f; cursor: pointer; font-size: .85rem; }
+.estate-reset:hover { color: #9b752c; }
+.estate-filters__advanced { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: center; gap: 8px; margin-top: -29px; margin-bottom: 29px; padding: 0 10px; border: 1px solid var(--estate-line); border-top: 0; background: #fbfbf8; }
+.estate-filters__advanced label { display: flex; min-width: 0; align-items: center; }
+.estate-filters__advanced input, .estate-filters__advanced select { width: 100%; height: 40px; padding: 0 13px; border: 1px solid #e4e7df; border-radius: 0; outline: 0; background: #fff; color: var(--estate-ink); font-size: .85rem; }
+.estate-filters__advanced input:focus, .estate-filters__advanced select:focus { border-color: #b89b58; box-shadow: 0 0 0 2px rgba(215,169,68,.14); }
+.estate-filters__advanced input::placeholder { color: #9aa39d; }
+.estate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 23px; }
+.estate-grid--loading > div { height: 350px; border: 1px solid #eaebe5; background: linear-gradient(180deg,#e8e9e1 0 65%,#fff 65% 100%); }
+.estate-card { min-width: 0; overflow: hidden; border: 1px solid #eaebe5; background: #fff; transition: box-shadow .2s ease, transform .2s ease; }
+.estate-card:hover { box-shadow: 0 14px 32px rgba(23,49,43,.09); transform: translateY(-3px); }
+.estate-card__visual { position: relative; display: block; height: 245px; overflow: hidden; background: #e8e9e1; }
+.estate-card__visual > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2,.75,.3,1); }
+.estate-card:hover .estate-card__visual > img { transform: scale(1.035); }
+.estate-card__badge { position: absolute; top: 14px; left: 14px; padding: 7px 10px; background: rgba(251,250,246,.95); color: var(--estate-forest); font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.estate-card__placeholder { display: flex; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 9px; background: linear-gradient(140deg,#e9e6db,#d7ddd3); color: #7c8b7f; }
+.estate-card__placeholder svg { width: 39px; height: 39px; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+.estate-card__placeholder span { font-size: .8rem; letter-spacing: .04em; }
+.estate-card__body { padding: 20px 20px 16px; }
+.estate-card__type { color: #9b752c; font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.estate-card h3 { margin-top: 7px; overflow: hidden; color: var(--estate-forest); font-size: 1.12rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.estate-card h3 a:hover { color: #9b752c; }
+.estate-card__location { display: flex; align-items: center; gap: 5px; min-height: 23px; margin-top: 8px !important; overflow: hidden; color: #849087; font-size: .87rem; text-overflow: ellipsis; white-space: nowrap; }
+.estate-card__location svg { width: 14px; height: 14px; flex: 0 0 auto; stroke: #a5884d; stroke-width: 1.5; }
+.estate-card__facts { display: flex; gap: 15px; margin-top: 16px; padding-bottom: 16px; border-bottom: 1px solid #eff0eb; color: #758179; font-size: .87rem; }
+.estate-card__facts strong { color: var(--estate-ink); font-weight: 700; }
+.estate-card__bottom { display: flex; align-items: end; justify-content: space-between; gap: 10px; padding-top: 14px; }
+.estate-card__price-label { display: block; color: #89938c; font-size: .8rem; }
+.estate-card__price { display: block; margin-top: 2px; color: var(--estate-forest); font-family: "Sora", "Inter", sans-serif; font-size: 1.35rem; font-weight: 700; letter-spacing: -.01em; }
+.estate-card__second-price { display: block; margin-top: 2px; color: #77847b; font-size: .8rem; }
+.estate-card__arrow { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border: 1px solid #dfe4dc; color: var(--estate-forest); transition: background .18s ease, color .18s ease; }
+.estate-card__arrow:hover { background: var(--estate-forest); color: #fff; }
+.estate-card__arrow svg { width: 17px; height: 17px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4; }
+.estate-empty { display: flex; min-height: 265px; flex-direction: column; align-items: center; justify-content: center; padding: 35px; border: 1px dashed #d9dfd7; background: #fbfbf8; text-align: center; }
+.estate-empty__icon { display: grid; width: 52px; height: 52px; place-items: center; border-radius: 50%; background: #f0eee5; color: #957a3c; }
+.estate-empty__icon svg { width: 29px; height: 29px; stroke: currentColor; stroke-width: 1.2; }
+.estate-empty h3 { margin-top: 15px; color: var(--estate-forest); font-size: 1.12rem; font-weight: 600; }
+.estate-empty p { margin-top: 6px; color: var(--estate-muted); font-size: .9rem; }
+.estate-button--light { margin-top: 18px; min-height: 40px; padding: 0 14px; background: transparent; color: var(--estate-forest) !important; }
+
+.estate-about { padding: 82px 0; background: #f2f2eb; }
+.estate-about__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); align-items: center; gap: clamp(35px, 7vw, 92px); }
+.estate-about__visual { position: relative; min-height: 350px; }
+.estate-about__visual img { display: block; width: 100%; height: 100%; min-height: 350px; object-fit: cover; }
+.estate-about__visual span { position: absolute; right: -18px; bottom: 22px; padding: 12px 16px; border: 1px solid rgba(215,169,68,.7); background: var(--estate-paper); color: var(--estate-forest); font-size: .8rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.estate-about__copy h2 { max-width: 540px; margin-top: 12px; color: var(--estate-forest); font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 600; }
+.estate-about__copy p { max-width: 490px; margin-top: 16px; color: #69776f; font-size: .95rem; line-height: 1.7; }
+.estate-about__copy .estate-text-link { display: inline-flex; margin-top: 22px; }
+.estate-services { padding: 82px 0 90px; background: var(--estate-paper); }
+.estate-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+.estate-service-card { min-height: 228px; padding: 25px; border: 1px solid var(--estate-line); background: var(--estate-white); }
+.estate-service-card > span { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #d9c48f; border-radius: 50%; color: #a27c30; font-size: 22px; }
+.estate-service-card h3 { margin-top: 18px; color: var(--estate-forest); font-size: 1.05rem; font-weight: 600; }
+.estate-service-card p { margin-top: 9px; color: var(--estate-muted); font-size: .9rem; line-height: 1.6; }
+.estate-service-card a { display: inline-flex; gap: 7px; margin-top: 17px; color: var(--estate-forest); font-size: .87rem; font-weight: 600; }
+.estate-service-card a span { color: var(--estate-gold); }
+.estate-simulator { padding: 82px 0; background: #f2f2eb; }
+.estate-simulator__grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); align-items: center; gap: clamp(35px, 7vw, 90px); }
+.estate-simulator__copy h2 { max-width: 500px; margin-top: 10px; color: var(--estate-forest); font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 600; }
+.estate-simulator__copy p { margin-top: 14px; color: #69776f; font-size: .95rem; line-height: 1.65; }
+.estate-simulator__copy ul { display: grid; gap: 10px; margin-top: 19px; color: #64736a; font-size: .9rem; }
+.estate-simulator__copy li::before { margin-right: 9px; color: var(--estate-gold); content: "✓"; }
+.estate-simulator__card { display: grid; gap: 14px; padding: 26px; border: 1px solid var(--estate-line); background: var(--estate-white); }
+.estate-simulator__card label { display: grid; gap: 7px; color: var(--estate-ink); font-size: .85rem; font-weight: 600; }
+.estate-simulator__card input, .estate-simulator__card select { width: 100%; min-width: 0; height: 43px; padding: 0 11px; border: 1px solid var(--estate-line); border-radius: 8px; background: var(--estate-paper); color: var(--estate-ink); font: inherit; font-size: .95rem; }
+.estate-simulator__card input:focus, .estate-simulator__card select:focus { outline: 2px solid rgba(215,169,68,.45); outline-offset: 1px; }
+.estate-simulator__row { display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; }
+.estate-simulator__card > small { color: var(--estate-muted); font-size: .8rem; line-height: 1.6; }
+.estate-simulator__error { color: #a53f30; font-size: .87rem; }
+.estate-simulator__result { display: grid; gap: 8px; padding: 15px; border: 1px solid var(--estate-line); background: var(--estate-paper); }
+.estate-simulator__result div { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--estate-muted); font-size: .85rem; }
+.estate-simulator__result strong { color: var(--estate-forest); font-size: .95rem; }
+.estate-testimonials { padding: 84px 0; background: #fff; }
+.estate-testimonials .estate-section-heading { max-width: 640px; margin-bottom: 40px; }
+.estate-review-slider { display: flex; align-items: center; gap: 14px; }
+.estate-review-slider__viewport { flex: 1; min-width: 0; overflow: hidden; border-radius: 16px; }
+.estate-review-card { max-width: 720px; margin-inline: auto; padding: 34px; border: 1px solid var(--estate-line); border-radius: 16px; background: var(--estate-white); box-shadow: 0 10px 30px rgba(16,32,28,.1); text-align: center; }
+.estate-review-card__stars { display: flex; justify-content: center; gap: 3px; margin-bottom: 14px; color: var(--estate-gold); font-size: 19px; letter-spacing: .08em; }
+.estate-review-card blockquote { color: var(--estate-ink); font-size: 1.08rem; font-style: italic; line-height: 1.65; }
+.estate-review-card__who { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+.estate-review-card__who img { width: 56px; height: 56px; margin-bottom: 12px; border: 2px solid var(--estate-gold-soft); border-radius: 50%; object-fit: cover; }
+.estate-review-card__who strong { color: var(--estate-ink); font-weight: 700; }
+.estate-review-card__who span { color: var(--estate-muted); font-size: .85rem; }
+.estate-review-slider__button { display: inline-flex; width: 46px; height: 46px; flex: 0 0 auto; align-items: center; justify-content: center; border: 1.5px solid var(--estate-line); border-radius: 50%; background: var(--estate-white); color: var(--estate-ink); cursor: pointer; font-size: 24px; transition: border-color .18s ease, color .18s ease; }
+.estate-review-slider__button:hover { border-color: var(--estate-gold); color: var(--estate-gold); }
+.estate-review-slider__dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.estate-review-slider__dots button { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 50%; background: var(--estate-line); cursor: pointer; }
+.estate-review-slider__dots button[aria-pressed="true"] { background: var(--estate-gold); transform: scale(1.25); }
+.estate-cta { padding: 68px 0; background: var(--estate-gold-soft); }
+.estate-cta__inner { display: flex; align-items: center; justify-content: space-between; gap: 35px; }
+.estate-cta h2 { max-width: 620px; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+.estate-button--dark { flex: 0 0 auto; background: var(--estate-forest); }
+.estate-contact { padding: 76px 0; background: #f2f2eb; }
+.estate-contact__inner { display: flex; align-items: center; justify-content: space-between; gap: 35px; }
+.estate-contact h2 { max-width: 620px; margin-top: 10px; color: var(--estate-forest); font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 600; }
+.estate-contact p { max-width: 570px; margin-top: 12px; color: #69776f; font-size: .95rem; line-height: 1.65; }
+.estate-services .estate-section-heading { margin-bottom: 25px; }
+.estate-services .estate-section-heading > div { max-width: 720px; }
+.estate-service-card { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.estate-service-card:hover { transform: translateY(-3px); border-color: #d9c48f; box-shadow: 0 12px 28px rgba(23,49,43,.07); }
+.estate-service-card a:hover, .estate-text-link:hover { color: #9b752c; }
+.estate-testimonials { border-top: 1px solid var(--estate-line); border-bottom: 1px solid var(--estate-line); }
+.estate-contact__inner > div { max-width: 700px; }
+.estate-contact__inner > .estate-button { flex: 0 0 auto; }
+.estate-footer { padding: 39px 0 22px; background: #17362f; color: #eff2ec; }
+.estate-footer__inner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 36px; row-gap: 22px; }
+.estate-brand--footer { width: 180px; padding: 0; background: transparent; }
+.estate-footer__inner > p { color: #bdc9c0; font-size: .9rem; }
+.estate-footer__inner > div { display: flex; flex-wrap: wrap; gap: 18px; color: #d7e0d9; font-size: .9rem; }
+.estate-footer__inner small { grid-column: 1 / -1; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.14); color: #93a69b; font-size: .85rem; }
+
+.estate-detail { background: #fbfaf6; }
+.estate-detail__container { padding-top: 28px; padding-bottom: 90px; }
+.estate-not-found { display: flex; min-height: 55vh; flex-direction: column; align-items: flex-start; justify-content: center; padding-top: 70px; padding-bottom: 80px; }
+.estate-not-found h1 { max-width: 680px; margin-top: 17px; color: var(--estate-forest); font-size: clamp(36px, 5vw, 58px); font-weight: 500; line-height: 1.08; letter-spacing: -.05em; }
+.estate-not-found p { max-width: 480px; margin-top: 16px; margin-bottom: 25px; color: var(--estate-muted); font-size: .95rem; line-height: 1.7; }
+.estate-breadcrumb { display: flex; align-items: center; gap: 10px; color: #929b94; font-size: .8rem; }
+.estate-breadcrumb a:hover { color: var(--estate-forest); }
+.estate-detail__heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 27px 0 22px; }
+.estate-detail__heading h1 { margin-top: 9px; color: var(--estate-forest); font-size: clamp(32px, 4.4vw, 48px); font-weight: 500; }
+.estate-detail__separator { padding: 0 5px; color: #b9a16c; }
+.estate-detail__location { margin-top: 8px !important; color: #78847c; font-size: .87rem; }
+.estate-detail__code { padding-bottom: 5px; color: #8b948c; font-size: .76rem; }
+.estate-gallery { display: grid; height: min(47vw, 510px); min-height: 300px; grid-template-columns: 1.45fr 1fr 1fr; grid-auto-rows: 1fr; grid-template-rows: 1fr 1fr; gap: 9px; overflow: hidden; }
+.estate-gallery figure { min-width: 0; min-height: 0; overflow: hidden; background: #e4e6de; }
+.estate-gallery figure:first-child { grid-row: span 2; }
+.estate-gallery figure img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.estate-gallery__photo { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.estate-gallery__photo img { transition: transform .25s cubic-bezier(.2,.75,.3,1); }
+.estate-gallery__photo:hover img { transform: scale(1.025); }
+.estate-gallery--single { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.estate-gallery--single figure:first-child { grid-row: auto; }
+.estate-gallery--two { grid-template-columns: 1.4fr 1fr; grid-template-rows: 1fr; }
+.estate-gallery--two figure:first-child { grid-row: auto; }
+.estate-gallery--many { height: auto; max-height: none; grid-template-rows: repeat(3, minmax(140px, 1fr)); }
+.estate-detail__no-photo { display: grid; height: min(38vw, 390px); min-height: 260px; place-items: center; background: linear-gradient(135deg,#e9e6db,#d7ddd3); color: #65756b; font-family: "Sora", sans-serif; font-size: 17px; text-align: center; }
+.estate-detail__content { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 54px; margin-top: 37px; }
+.estate-detail__summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 22px; border-bottom: 1px solid var(--estate-line); }
+.estate-detail__summary > div > span { color: #828d84; font-size: .8rem; }
+.estate-detail__summary strong { display: block; margin-top: 4px; color: var(--estate-forest); font-family: "Sora", "Inter", sans-serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -.01em; }
+.estate-detail__second-price { display: block; margin-top: 4px; color: #77847b; font-size: .8rem; }
+.estate-detail__status { padding: 7px 10px; border: 1px solid #c7d8c9; color: #446c51; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.estate-feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 21px; background: var(--estate-line); border: 1px solid var(--estate-line); }
+.estate-feature-grid > div { display: flex; min-height: 66px; flex-direction: column; justify-content: center; gap: 3px; padding: 11px 15px; background: #fff; }
+.estate-feature-grid span { color: #859087; font-size: .8rem; }
+.estate-feature-grid strong { color: var(--estate-forest); font-size: .9rem; }
+.estate-description { margin-top: 32px; }
+.estate-description h2 { margin-top: 8px; color: var(--estate-forest); font-size: 1.5rem; font-weight: 600; }
+.estate-description p { margin-top: 14px !important; color: #64736a; font-size: .95rem; line-height: 1.7; white-space: pre-line; }
+.estate-back-link { display: inline-flex; margin-top: 30px; color: #56705f !important; font-size: .87rem; font-weight: 600; }
+.estate-back-link:hover { color: #9b752c !important; }
+.estate-contact-card { align-self: start; padding: 25px; border: 1px solid #e5e5dc; background: #fff; box-shadow: 0 12px 34px rgba(23,49,43,.04); }
+.estate-contact-card__icon { display: grid; width: 35px; height: 35px; margin-bottom: 17px; place-items: center; border: 1px solid #ddc78e; border-radius: 50%; color: #a27c30; }
+.estate-contact-card h2 { margin-top: 8px; color: var(--estate-forest); font-size: 1.5rem; font-weight: 600; }
+.estate-contact-card p { margin-top: 10px !important; color: #748078; font-size: .85rem; line-height: 1.6; }
+.estate-button--wide { width: 100%; margin-top: 20px; }
+.estate-contact-card small { display: block; margin-top: 13px; color: #909991; font-size: .8rem; text-align: center; }
+.estate-lightbox { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 28px; background: rgba(14,25,20,.94); }
+.estate-lightbox__dialog { position: relative; display: flex; width: min(1100px,100%); max-height: calc(100vh - 56px); flex-direction: column; align-items: center; outline: none; }
+.estate-lightbox__image { display: block; width: 100%; height: min(78vh,820px); object-fit: contain; }
+.estate-lightbox__close, .estate-lightbox__arrow { position: absolute; z-index: 1; display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; background: rgba(20,35,28,.55); color: #fff; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+.estate-lightbox__close:hover, .estate-lightbox__arrow:hover { border-color: #e6cb87; background: rgba(215,169,68,.3); }
+.estate-lightbox__close { top: -15px; right: 0; font-size: 27px; line-height: 1; }
+.estate-lightbox__arrow { top: 50%; font-size: 32px; line-height: 1; transform: translateY(-50%); }
+.estate-lightbox__arrow--left { left: 14px; }
+.estate-lightbox__arrow--right { right: 14px; }
+.estate-lightbox__caption { display: flex; width: min(100%,760px); align-items: center; justify-content: space-between; gap: 16px; padding: 14px 5px 0; color: #e7ece6; font-size: .87rem; }
+.estate-lightbox__caption span { flex: 0 0 auto; color: #c3cfbf; font-size: .8rem; }
+
+html[data-estate-theme="dark"] .estate-site {
+  --estate-ink: #e9f2ef;
+  --estate-forest: #d9e9df;
+  --estate-leaf: #94b7a6;
+  --estate-muted: #9db3ad;
+  --estate-gold: #eabd60;
+  --estate-gold-soft: #29342e;
+  --estate-paper: #0b1211;
+  --estate-line: #263731;
+  --estate-white: #14201d;
+  color: var(--estate-ink);
+  background: var(--estate-paper);
+}
+html[data-estate-theme="dark"] .estate-header { background: rgba(11,18,17,.97); border-color: #263731; }
+html[data-estate-theme="dark"] .estate-nav { color: #c0cec6; }
+html[data-estate-theme="dark"] .estate-theme-toggle,
+html[data-estate-theme="dark"] .estate-header__action { border-color: #40564b; color: var(--estate-ink); }
+html[data-estate-theme="dark"] .estate-theme-toggle:hover,
+html[data-estate-theme="dark"] .estate-header__action:hover { background: #1b2a23; border-color: var(--estate-gold); }
+html[data-estate-theme="dark"] .estate-eyebrow,
+html[data-estate-theme="dark"] .estate-card__type { color: #dfbf70; }
+html[data-estate-theme="dark"] .estate-hero__content > p,
+html[data-estate-theme="dark"] .estate-hero__note,
+html[data-estate-theme="dark"] .estate-scroll-cue { color: #a9b8b0 !important; }
+html[data-estate-theme="dark"] .estate-listings { background: #0f1716; }
+html[data-estate-theme="dark"] .estate-results-count,
+html[data-estate-theme="dark"] .estate-card__location,
+html[data-estate-theme="dark"] .estate-card__price-label,
+html[data-estate-theme="dark"] .estate-card__second-price,
+html[data-estate-theme="dark"] .estate-contact-card small { color: #a1b1a8; }
+html[data-estate-theme="dark"] .estate-filters,
+html[data-estate-theme="dark"] .estate-filters__advanced,
+html[data-estate-theme="dark"] .estate-empty { border-color: #293a32; background: #14201d; }
+html[data-estate-theme="dark"] .estate-filters select,
+html[data-estate-theme="dark"] .estate-search-field input,
+html[data-estate-theme="dark"] .estate-filters__advanced input,
+html[data-estate-theme="dark"] .estate-filters__advanced select { border-color: #34463e; background-color: #18251f; color: var(--estate-ink); }
+html[data-estate-theme="dark"] .estate-filters select { border-left-color: #34463e; }
+html[data-estate-theme="dark"] .estate-search-field input::placeholder,
+html[data-estate-theme="dark"] .estate-filters__advanced input::placeholder { color: #91a199; }
+html[data-estate-theme="dark"] .estate-reset { color: #bdc9c1; }
+html[data-estate-theme="dark"] .estate-grid--loading > div { border-color: #293a32; background: linear-gradient(180deg,#26332d 0 65%,#18231f 65% 100%); }
+html[data-estate-theme="dark"] .estate-card,
+html[data-estate-theme="dark"] .estate-feature-grid > div,
+html[data-estate-theme="dark"] .estate-contact-card { border-color: #293a32; background: #18231f; }
+html[data-estate-theme="dark"] .estate-card:hover { box-shadow: 0 14px 32px rgba(0,0,0,.28); }
+html[data-estate-theme="dark"] .estate-card__visual,
+html[data-estate-theme="dark"] .estate-gallery figure { background: #25332c; }
+html[data-estate-theme="dark"] .estate-card__badge { background: rgba(20,32,29,.94); color: #e6efe8; }
+html[data-estate-theme="dark"] .estate-card__placeholder,
+html[data-estate-theme="dark"] .estate-detail__no-photo { background: linear-gradient(140deg,#25332c,#18231f); color: #b2c0b7; }
+html[data-estate-theme="dark"] .estate-card__location svg { stroke: #dfbf70; }
+html[data-estate-theme="dark"] .estate-card__facts { border-color: #2b3a33; color: #a5b3ab; }
+html[data-estate-theme="dark"] .estate-card__arrow { border-color: #40564b; }
+html[data-estate-theme="dark"] .estate-card__arrow:hover { background: #32624f; color: #fff; }
+html[data-estate-theme="dark"] .estate-empty { border-color: #40564b; }
+html[data-estate-theme="dark"] .estate-empty__icon { background: #29342e; color: #e0c477; }
+html[data-estate-theme="dark"] .estate-empty p,
+html[data-estate-theme="dark"] .estate-about__copy p,
+html[data-estate-theme="dark"] .estate-simulator__copy p,
+html[data-estate-theme="dark"] .estate-simulator__copy ul,
+html[data-estate-theme="dark"] .estate-contact p,
+html[data-estate-theme="dark"] .estate-testimonials p,
+html[data-estate-theme="dark"] .estate-detail__location,
+html[data-estate-theme="dark"] .estate-description p,
+html[data-estate-theme="dark"] .estate-contact-card p { color: #a9b7ae; }
+html[data-estate-theme="dark"] .estate-about { background: #111a16; }
+html[data-estate-theme="dark"] .estate-services { background: #0b1211; }
+html[data-estate-theme="dark"] .estate-service-card,
+html[data-estate-theme="dark"] .estate-simulator__card { border-color: #293a32; background: #18231f; }
+html[data-estate-theme="dark"] .estate-service-card > span { border-color: #5b604b; color: #e0c477; }
+html[data-estate-theme="dark"] .estate-service-card p { color: #a9b7ae; }
+html[data-estate-theme="dark"] .estate-simulator,
+html[data-estate-theme="dark"] .estate-contact { background: #111a16; }
+html[data-estate-theme="dark"] .estate-simulator__card input,
+html[data-estate-theme="dark"] .estate-simulator__card select,
+html[data-estate-theme="dark"] .estate-simulator__result { border-color: #34463e; background: #101a16; color: #e9f2ef; }
+html[data-estate-theme="dark"] .estate-simulator__result strong { color: #d9e9df; }
+html[data-estate-theme="dark"] .estate-testimonials { background: #0f1716; border-color: #263731; }
+html[data-estate-theme="dark"] .estate-cta { background: #202b25; }
+html[data-estate-theme="dark"] .estate-footer { background: #060b0a; }
+html[data-estate-theme="dark"] .estate-detail { background: var(--estate-paper); }
+html[data-estate-theme="dark"] .estate-breadcrumb,
+html[data-estate-theme="dark"] .estate-detail__code,
+html[data-estate-theme="dark"] .estate-detail__summary > div > span,
+html[data-estate-theme="dark"] .estate-feature-grid span { color: #a1b0a7; }
+html[data-estate-theme="dark"] .estate-detail__status { border-color: #42634d; color: #a8d3ae; }
+html[data-estate-theme="dark"] .estate-feature-grid { border-color: #293a32; }
+html[data-estate-theme="dark"] .estate-feature-grid > div { border-color: #293a32; }
+html[data-estate-theme="dark"] .estate-contact-card { box-shadow: 0 12px 34px rgba(0,0,0,.2); }
+html[data-estate-theme="dark"] .estate-button,
+html[data-estate-theme="dark"] .estate-button--dark { border-color: #32624f; background: #32624f; }
+html[data-estate-theme="dark"] .estate-button:hover,
+html[data-estate-theme="dark"] .estate-button--dark:hover { border-color: #427b63; background: #427b63; }
+html[data-estate-theme="dark"] .estate-button--light { border-color: #40564b; background: transparent; color: var(--estate-ink) !important; }
+
+html[data-estate-theme="logo"] .estate-site {
+  --estate-ink: #f9f8eb;
+  --estate-forest: #eabd60;
+  --estate-leaf: #a9711e;
+  --estate-muted: #a5a496;
+  --estate-gold: #eabd60;
+  --estate-gold-soft: #211a0e;
+  --estate-paper: #000;
+  --estate-line: #2b2b24;
+  --estate-white: #101319;
+  color: var(--estate-ink);
+  background: var(--estate-paper);
+}
+html[data-estate-theme="logo"] .estate-header { background: rgba(0,0,0,.96); border-color: #2b2b24; }
+html[data-estate-theme="logo"] .estate-nav { color: #f9f8eb; }
+html[data-estate-theme="logo"] .estate-theme-toggle,
+html[data-estate-theme="logo"] .estate-header__action { border-color: #a9711e; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-theme-toggle:hover,
+html[data-estate-theme="logo"] .estate-header__action:hover { background: #211a0e; border-color: #eabd60; }
+html[data-estate-theme="logo"] .estate-eyebrow,
+html[data-estate-theme="logo"] .estate-card__type,
+html[data-estate-theme="logo"] .estate-hero h1 em { color: #eabd60; }
+html[data-estate-theme="logo"] .estate-hero__content > p,
+html[data-estate-theme="logo"] .estate-hero__note,
+html[data-estate-theme="logo"] .estate-scroll-cue { color: #c2c0ad !important; }
+html[data-estate-theme="logo"] .estate-listings { background: #07080c; }
+html[data-estate-theme="logo"] .estate-results-count,
+html[data-estate-theme="logo"] .estate-card__location,
+html[data-estate-theme="logo"] .estate-card__price-label,
+html[data-estate-theme="logo"] .estate-card__second-price,
+html[data-estate-theme="logo"] .estate-contact-card small { color: #c2c0ad; }
+html[data-estate-theme="logo"] .estate-filters,
+html[data-estate-theme="logo"] .estate-filters__advanced,
+html[data-estate-theme="logo"] .estate-empty { border-color: #2b2b24; background: #101319; }
+html[data-estate-theme="logo"] .estate-filters select,
+html[data-estate-theme="logo"] .estate-search-field input,
+html[data-estate-theme="logo"] .estate-filters__advanced input,
+html[data-estate-theme="logo"] .estate-filters__advanced select { border-color: #2b2b24; background-color: #101319; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-search-field input::placeholder,
+html[data-estate-theme="logo"] .estate-filters__advanced input::placeholder { color: #eabd60; opacity: .82; }
+html[data-estate-theme="logo"] .estate-filters select option,
+html[data-estate-theme="logo"] .estate-filters__advanced select option { background: #101319; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-search-field svg { stroke: #eabd60; }
+html[data-estate-theme="logo"] .estate-reset { color: #f9f8eb; }
+html[data-estate-theme="logo"] .estate-grid--loading > div { border-color: #2b2b24; background: linear-gradient(180deg,#1c1608 0 65%,#101319 65% 100%); }
+html[data-estate-theme="logo"] .estate-card,
+html[data-estate-theme="logo"] .estate-feature-grid > div,
+html[data-estate-theme="logo"] .estate-contact-card { border-color: #2b2b24; background: #101319; }
+html[data-estate-theme="logo"] .estate-card:hover { box-shadow: 0 14px 32px rgba(0,0,0,.7); }
+html[data-estate-theme="logo"] .estate-card__visual,
+html[data-estate-theme="logo"] .estate-gallery figure { background: #1c1608; }
+html[data-estate-theme="logo"] .estate-card__badge { background: #eabd60; color: #14140d; }
+html[data-estate-theme="logo"] .estate-card__placeholder,
+html[data-estate-theme="logo"] .estate-detail__no-photo { background: linear-gradient(135deg,#1c1608,#3d2c0d); color: #f9f8eb; }
+html[data-estate-theme="logo"] .estate-card__location svg { stroke: #eabd60; }
+html[data-estate-theme="logo"] .estate-card__facts { border-color: #2b2b24; color: #c2c0ad; }
+html[data-estate-theme="logo"] .estate-card__arrow { border-color: #a9711e; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-card__arrow:hover { background: #eabd60; color: #14140d; }
+html[data-estate-theme="logo"] .estate-empty__icon { background: #101319; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-empty p,
+html[data-estate-theme="logo"] .estate-about__copy p,
+html[data-estate-theme="logo"] .estate-simulator__copy p,
+html[data-estate-theme="logo"] .estate-simulator__copy ul,
+html[data-estate-theme="logo"] .estate-contact p,
+html[data-estate-theme="logo"] .estate-testimonials p,
+html[data-estate-theme="logo"] .estate-detail__location,
+html[data-estate-theme="logo"] .estate-description p,
+html[data-estate-theme="logo"] .estate-contact-card p { color: #c2c0ad; }
+html[data-estate-theme="logo"] .estate-about { background: #07080c; }
+html[data-estate-theme="logo"] .estate-services { background: #000; }
+html[data-estate-theme="logo"] .estate-service-card,
+html[data-estate-theme="logo"] .estate-simulator__card { border-color: #2b2b24; background: #101319; }
+html[data-estate-theme="logo"] .estate-service-card > span { border-color: #a9711e; color: #eabd60; }
+html[data-estate-theme="logo"] .estate-service-card p { color: #c2c0ad; }
+html[data-estate-theme="logo"] .estate-service-card a { color: #f9f8eb; }
+html[data-estate-theme="logo"] .estate-simulator,
+html[data-estate-theme="logo"] .estate-contact { background: #07080c; }
+html[data-estate-theme="logo"] .estate-simulator__card input,
+html[data-estate-theme="logo"] .estate-simulator__card select,
+html[data-estate-theme="logo"] .estate-simulator__result { border-color: #2b2b24; background: #080a0d; color: #f9f8eb; }
+html[data-estate-theme="logo"] .estate-simulator__result strong { color: #eabd60; }
+html[data-estate-theme="logo"] .estate-testimonials { background: #000; border-color: #2b2b24; }
+html[data-estate-theme="logo"] .estate-cta { background: #000; }
+html[data-estate-theme="logo"] .estate-footer { background: #000; }
+html[data-estate-theme="logo"] .estate-detail { background: #000; }
+html[data-estate-theme="logo"] .estate-breadcrumb,
+html[data-estate-theme="logo"] .estate-detail__code,
+html[data-estate-theme="logo"] .estate-detail__summary > div > span,
+html[data-estate-theme="logo"] .estate-feature-grid span { color: #c2c0ad; }
+html[data-estate-theme="logo"] .estate-detail__status { border-color: #a9711e; color: #fdf3ac; }
+html[data-estate-theme="logo"] .estate-feature-grid { border-color: #2b2b24; }
+html[data-estate-theme="logo"] .estate-feature-grid > div { border-color: #2b2b24; }
+html[data-estate-theme="logo"] .estate-contact-card { box-shadow: 0 12px 34px rgba(0,0,0,.7); }
+html[data-estate-theme="logo"] .estate-button,
+html[data-estate-theme="logo"] .estate-button--dark { border-color: #eabd60; background: #eabd60; color: #14140d !important; }
+html[data-estate-theme="logo"] .estate-button span { color: #14140d; }
+html[data-estate-theme="logo"] .estate-button:hover,
+html[data-estate-theme="logo"] .estate-button--dark:hover { border-color: #fdf3ac; background: #fdf3ac; }
+html[data-estate-theme="logo"] .estate-button--light { border-color: #eabd60; background: transparent; color: #eabd60 !important; }
+html[data-estate-theme="logo"] .estate-button--light:hover { background: #eabd60; color: #14140d !important; }
+
+@media (max-width: 900px) {
+  .estate-container { width: min(100% - 38px, 700px); }
+  .estate-header__inner { height: 76px; gap: 12px; }
+  .estate-brand { width: min(180px, 30vw); }
+  .estate-nav { gap: 0; margin-right: 12px; }
+  .estate-header__action { gap: 8px; padding: 10px 12px; }
+  .estate-hero { padding-top: 54px; }
+  .estate-hero__grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .estate-hero h1 { font-size: clamp(39px, 6vw, 58px); }
+  .estate-hero__visual { min-height: 390px; }
+  .estate-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .estate-filters { grid-template-columns: 1fr 1fr; }
+  .estate-search-field { grid-column: span 2; border-bottom: 1px solid var(--estate-line); }
+  .estate-filters select { border-left: 0; }
+  .estate-filters__advanced { grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: -19px; margin-bottom: 19px; padding: 0 7px; }
+  .estate-nav a:nth-child(n+3) { display: none; }
+  .estate-about__grid { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: 28px; }
+  .estate-about__visual, .estate-about__visual img { min-height: 290px; }
+  .estate-service-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .estate-service-card:last-child { grid-column: 1 / -1; }
+  .estate-simulator__grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .estate-contact__inner { align-items: flex-start; }
+  .estate-detail__content { grid-template-columns: minmax(0,1fr) 270px; gap: 28px; }
+  .estate-footer__inner { grid-template-columns: auto 1fr; }
+  .estate-footer__inner > div { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .estate-container { width: calc(100% - 34px); }
+  .estate-header__inner { height: 68px; gap: 8px; }
+  .estate-brand { width: min(140px, 38vw); }
+  .estate-nav { display: flex; flex: 1; justify-content: flex-end; gap: 0; margin: 0; font-size: .75rem; }
+  .estate-nav a { padding: .4rem .35rem; }
+  .estate-nav a:first-child { display: flex; min-height: 40px; align-items: center; margin-right: 8px; }
+  .estate-nav a:first-child { display: none; }
+  .estate-theme-toggle { width: 34px; height: 34px; }
+  .estate-header__action { gap: 6px; padding: 9px 9px; font-size: .65rem; }
+  .estate-hero { padding: 40px 0 67px; }
+  .estate-hero__grid { grid-template-columns: 1fr; gap: 34px; }
+  .estate-hero__content { padding: 0; }
+  .estate-hero h1 { max-width: 480px; margin-top: 16px; font-size: clamp(42px, 12vw, 58px); }
+  .estate-hero__content > p { margin-top: 17px; font-size: 14px; }
+  .estate-hero__actions { flex-wrap: wrap; gap: 16px; margin-top: 23px; }
+  .estate-hero__note { margin-top: 25px; }
+  .estate-hero__visual { min-height: 320px; height: 82vw; max-height: 430px; margin-left: 10px; }
+  .estate-hero__visual::before { top: -10px; right: -9px; }
+  .estate-hero__seal { top: 20px; left: -16px; width: 68px; height: 68px; font-size: 9px; }
+  .estate-hero__image-caption { right: 20px; bottom: 20px; left: 20px; }
+  .estate-hero__image-caption strong { font-size: 18px; }
+  .estate-scroll-cue { bottom: 19px; left: 17px; }
+  .estate-listings { padding: 28px 0 70px; }
+  .estate-section-heading { align-items: start; margin-bottom: 22px; }
+  .estate-section-heading h2 { font-size: 1.6rem; }
+  .estate-section-heading p { max-width: 280px; font-size: .9rem; }
+  .estate-results-count { padding-top: 6px; white-space: nowrap; }
+  .estate-filters { gap: 3px; margin-bottom: 19px; padding: 7px; }
+  .estate-filters select, .estate-search-field input { height: 42px; font-size: .85rem; }
+  .estate-filters__advanced input, .estate-filters__advanced select { font-size: .8rem; }
+  .estate-search-field input { min-width: 0; }
+  .estate-filters__advanced { gap: 6px; }
+  .estate-grid { grid-template-columns: 1fr; gap: 16px; }
+  .estate-card__visual { height: 235px; }
+  .estate-card__body { padding: 18px; }
+  .estate-about { padding: 54px 0; }
+  .estate-about__grid { grid-template-columns: 1fr; gap: 28px; }
+  .estate-about__visual, .estate-about__visual img { min-height: 240px; }
+  .estate-about__visual span { right: 10px; bottom: 10px; padding: 9px 11px; font-size: .7rem; }
+  .estate-about__copy h2 { font-size: 1.6rem; }
+  .estate-service-grid { grid-template-columns: 1fr; }
+  .estate-service-card:last-child { grid-column: auto; }
+  .estate-simulator__grid { grid-template-columns: 1fr; gap: 25px; }
+  .estate-simulator__row { grid-template-columns: 1fr; }
+  .estate-testimonials__inner { grid-template-columns: 42px 1fr; gap: 14px; }
+  .estate-testimonials__mark { font-size: 58px; }
+  .estate-contact__inner { flex-direction: column; gap: 23px; }
+  .estate-contact__inner > .estate-button { width: 100%; }
+  .estate-simulator, .estate-contact, .estate-services { padding-block: 54px; }
+  .estate-cta { padding: 49px 0; }
+  .estate-cta__inner { align-items: start; flex-direction: column; gap: 22px; }
+  .estate-cta h2 { font-size: 1.6rem; }
+  .estate-review-card { padding: 24px 18px; }
+  .estate-review-slider { gap: 7px; }
+  .estate-review-slider__button { width: 36px; height: 36px; font-size: 20px; }
+  .estate-footer { padding-top: 31px; }
+  .estate-footer__inner { grid-template-columns: 1fr; gap: 14px; }
+  .estate-footer__inner > div { flex-wrap: wrap; gap: 17px; }
+  .estate-footer__inner small { margin-top: 6px; }
+  .estate-detail__container { padding-top: 22px; padding-bottom: 62px; }
+  .estate-not-found { min-height: 52vh; padding-top: 58px; padding-bottom: 60px; }
+  .estate-not-found h1 { font-size: 37px; }
+  .estate-not-found p { font-size: 13px; }
+  .estate-detail__heading { align-items: start; flex-direction: column; gap: 7px; padding: 22px 0 17px; }
+  .estate-detail__heading h1 { font-size: 34px; }
+  .estate-gallery { height: auto; min-height: 0; grid-template-columns: 1fr 1fr; grid-auto-rows: 126px; grid-template-rows: none; gap: 6px; }
+  .estate-gallery figure:first-child { grid-column: span 2; grid-row: auto; min-height: 230px; }
+  .estate-gallery--single { grid-template-columns: 1fr; grid-template-rows: 260px; }
+  .estate-gallery--single figure:first-child { grid-column: auto; }
+  .estate-gallery--two { grid-template-columns: 1fr 1fr; grid-template-rows: 230px 126px; }
+  .estate-gallery--two figure:first-child { grid-column: span 2; }
+  .estate-gallery--many { grid-template-rows: none; }
+  .estate-detail__no-photo { height: 240px; min-height: 0; padding: 20px; font-size: 14px; }
+  .estate-detail__content { grid-template-columns: 1fr; gap: 28px; margin-top: 24px; }
+  .estate-detail__summary strong { font-size: 22px; }
+  .estate-feature-grid { grid-template-columns: repeat(2,1fr); }
+  .estate-contact-card { padding: 21px; }
+  .estate-lightbox { padding: 13px; }
+  .estate-lightbox__dialog { max-height: calc(100vh - 26px); }
+  .estate-lightbox__image { height: min(72vh,680px); }
+  .estate-lightbox__close { top: -9px; right: 0; width: 38px; height: 38px; }
+  .estate-lightbox__arrow { width: 36px; height: 36px; font-size: 27px; }
+  .estate-lightbox__arrow--left { left: 6px; }
+  .estate-lightbox__arrow--right { right: 6px; }
+}
+
+@media (max-width: 380px) {
+  .estate-header__inner { gap: 5px; }
+  .estate-brand { width: clamp(92px, calc(100vw - 230px), 125px); }
+  .estate-nav { font-size: .65rem; }
+  .estate-theme-toggle { width: 32px; height: 32px; }
+  .estate-header__action { gap: 4px; padding: 8px 6px; font-size: 8px; }
+}

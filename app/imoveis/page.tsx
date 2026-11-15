@@ -113,7 +113,7 @@ function PropertiesContent() {
     setExporting(true);setExportError("");
     try {
       const supabase=createClient();
-      let exported:Record<string,unknown>[]=[];
+      const exported:Record<string,unknown>[]=[];
       for(let start=0;;start+=1000){
         let request=supabase.from("properties").select("internal_code,title,property_type,purpose,status,postal_code,street,street_number,complement,neighborhood,city,state,sale_price,rent_price,condo_fee,property_tax,total_area,built_area,bedrooms,suites,bathrooms,parking_spaces,created_at").order("created_at",{ascending:false});
         if(q)request=request.or(["internal_code","title","neighborhood","city"].map(column=>`${column}.ilike.%${q}%`).join(","));
@@ -147,7 +147,7 @@ function PropertiesContent() {
     setPrinting(true);setExportError("");
     try{
       const supabase=createClient();
-      let exported:Record<string,unknown>[]=[];
+      const exported:Record<string,unknown>[]=[];
       for(let start=0;;start+=1000){
         let request=supabase.from("properties").select("internal_code,title,property_type,purpose,status,neighborhood,city,sale_price,rent_price,created_at").order("created_at",{ascending:false});
         if(q)request=request.or(["internal_code","title","neighborhood","city"].map(column=>`${column}.ilike.%${q}%`).join(","));
@@ -190,7 +190,7 @@ function PropertiesContent() {
       const editable=isAdmin||item.created_by===userId;
       const price=money(item.sale_price)??money(item.rent_price);
       return <article key={item.id} className="overflow-hidden rounded-2xl border border-[var(--line)] bg-white">
-        {item.cover?<img src={item.cover} alt="" className="h-48 w-full object-cover"/>:<div className="flex h-48 items-center justify-center bg-emerald-50 text-4xl text-emerald-800" aria-hidden="true">⌂</div>}
+        {item.cover?<img src={item.cover} alt="" loading="lazy" className="h-48 w-full object-cover"/>:<div className="flex h-48 items-center justify-center bg-emerald-50 text-4xl text-emerald-800" aria-hidden="true">⌂</div>}
         <div className="p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wide text-[var(--green)]">{item.internal_code}</p><h2 className="mt-1 line-clamp-2 text-lg font-semibold">{item.title}</h2></div><span className="rounded-full bg-[var(--canvas)] px-2.5 py-1 text-xs">{statusLabels[item.status]}</span></div>
           <p className="mt-2 text-sm text-[var(--muted)]">{[typeLabels[item.property_type],purposeLabels[item.purpose],item.neighborhood,item.city].filter(Boolean).join(" · ")}</p><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--muted)]">{item.bedrooms!=null&&<span>{item.bedrooms} quartos</span>}{item.built_area!=null&&<span>{item.built_area} m²</span>}</div>
           {price&&<p className="mt-4 text-lg font-semibold">{price}<span className="ml-1 text-xs font-normal text-[var(--muted)]">{item.purpose==="aluguel"?"/mês":item.purpose==="ambos"?"ou aluguel":""}</span></p>}

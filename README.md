@@ -53,7 +53,7 @@ Para imóveis, informe o CPF/CNPJ do proprietário somente se esse cliente já e
 
 As linhas válidas são gravadas separadamente. Se uma linha falhar, o relatório identifica a linha e a mensagem retornada pelo banco; linhas com erro não impedem a gravação das demais. A associação de registros e as permissões continuam protegidas pelas políticas RLS já aplicadas. A tela não envia fotos ou documentos na importação CSV.
 
-Para conectar a vitrine do site aos imóveis disponíveis, consulte [integração do site](outputs/integracao-site-imobiliaria.md). A view pública retorna apenas campos de anúncio de imóveis disponíveis; fotos e documentos seguem privados.
+O site público está integrado ao CRM: `/` mostra os imóveis disponíveis e `/anuncio/[id]` mostra os detalhes. A vitrine usa a view pública e links assinados no servidor para as fotos do bucket privado; documentos nunca são publicados. O botão no cabeçalho alterna entre os temas claro, escuro e a paleta do logo; a preferência fica salva no navegador. `/sitemap.xml` lista somente os anúncios públicos e `/robots.txt` orienta a indexação. Configure `NEXT_PUBLIC_SITE_URL` com o domínio final na Vercel. Veja [integração da vitrine](outputs/integracao-site-imobiliaria.md) para as variáveis e os cuidados de publicação.
 
 Para habilitar anonimização LGPD, execute uma vez `outputs/005_lgpd_anonymize_client.sql` no SQL Editor do Supabase. Na ficha do cliente, o admin verá **Anonimizar dados**. A ação limpa os dados de contato e observações, remove papéis, interesses e lembretes, apaga o vínculo do proprietário nos imóveis e retira dos logs os valores pessoais anteriores, mantendo um evento genérico de anonimização. O histórico de contatos conserva tipo e data, mas remove as anotações. A ação não pode ser desfeita.
 

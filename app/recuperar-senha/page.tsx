@@ -11,7 +11,7 @@ export default function RecoverPage() {
     else setMessage("Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.");
     setBusy(false);
   }
-  return <main className="flex min-h-screen items-center justify-center px-4 py-10"><section className="w-full max-w-md rounded-3xl border border-[var(--line)] bg-white p-7 shadow-sm sm:p-9">
+  return <main className="crm-auth-page flex min-h-screen items-center justify-center px-4 py-10"><section className="crm-auth-card w-full max-w-md rounded-3xl border border-[var(--line)] bg-white p-7 shadow-sm sm:p-9">
     <p className="mb-3 text-sm font-semibold uppercase tracking-[.18em] text-[var(--green)]">CRM Imobiliária</p><h1 className="text-2xl font-semibold">Recuperar senha</h1><p className="mt-2 text-sm text-[var(--muted)]">Enviaremos um link para o e-mail da sua conta.</p>
     <form onSubmit={submit} className="mt-7 space-y-5"><label className="block text-sm font-medium">E-mail<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full rounded-xl border border-[var(--line)] px-4 py-3 outline-none focus:border-[var(--green)]"/></label>
     <p className="text-xs text-[var(--muted)]">Use o link mais recente uma única vez. No ambiente local, abra-o no mesmo navegador em que pediu a recuperação.</p>
