@@ -36,7 +36,7 @@ function messageFrom(cause: unknown) {
 }
 async function recordAction(supabase: unknown, userId: string, action: string, details: Record<string, unknown>) {
   // O cliente Supabase não tem o tipo gerado do schema, então tipamos só esta chamada RPC.
-  const rpc = (supabase as ReturnType<typeof createSupabaseClient>).rpc as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+  const rpc = (supabase as ReturnType<typeof createSupabaseClient>).rpc.bind(supabase) as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
   const { error } = await rpc("record_user_admin_action", { target_user_id: userId, action_name: action, details });
   if (error) throw error;
 }
@@ -197,7 +197,7 @@ export async function PATCH(request: Request) {
         const activeIds = new Set(allUsers.users.filter(user => user.id !== id && (!user.banned_until || Date.parse(user.banned_until) <= Date.now())).map(user => user.id));
         if ((adminProfiles ?? []).filter(profile => profile.id !== id && !profile.disabled_at && activeIds.has(profile.id)).length === 0) return NextResponse.json({ error: "Mantenha ao menos uma conta administradora ativa." }, { status: 400 });
       }
-      const rpc = session.supabase.rpc as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
+      const rpc = session.supabase.rpc.bind(session.supabase) as unknown as (name: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
       const { error: prepareError } = await rpc("prepare_user_for_deletion", { target_user_id: id, replacement_user_id: replacementId });
       if (prepareError) throw prepareError;
       const { error: deleteError } = await session.admin.auth.admin.deleteUser(id);

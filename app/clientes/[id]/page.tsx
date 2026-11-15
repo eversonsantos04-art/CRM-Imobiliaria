@@ -167,7 +167,8 @@ export default function ClientDetailsPage() {
     if(!client||!isAdmin||!window.confirm(`Excluir definitivamente o cadastro de ${client.name}? O histórico, papéis, interesses e lembretes também serão removidos. Imóveis vinculados serão mantidos sem proprietário associado. Esta ação não pode ser desfeita.`))return;
     setSaving(true);setError("");
     try{
-      const {error:deleteError}=await createClient().rpc("delete_client_data",{target_client_id:client.id});
+      const supabase=createClient();
+      const {error:deleteError}=await supabase.rpc("delete_client_data",{target_client_id:client.id});
       if(deleteError)throw deleteError;
       router.replace("/clientes?excluido=1");
       router.refresh();
