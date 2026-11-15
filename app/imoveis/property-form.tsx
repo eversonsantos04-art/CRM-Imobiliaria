@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { removePropertyDocument, removePropertyPhoto, reorderPropertyPhotos, saveProperty, setPropertyCover } from "@/lib/properties";
+import { FieldError, FormattedInput } from "@/components/form-inputs";
+import { digitsOnly, validateBrazilianPostalCode, validatePropertyFormData, type FieldFormat, type FormFieldErrors } from "@/lib/form-validation";
 
 export type PropertyFormProperty = {
   id: string; internal_code: string; title: string; description: string | null;
@@ -53,12 +55,82 @@ export function PropertyForm({ property, photos: initialPhotos, documents: initi
   const [documents, setDocuments] = useState(initialDocuments);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FormFieldErrors>({});
+  const [postalLookupStatus, setPostalLookupStatus] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const documentInput = useRef<HTMLInputElement>(null);
+  const postalLookupController = useRef<AbortController | null>(null);
+  const lastPostalLookup = useRef("");
+  const lastPostalAddress = useRef<Record<string, string>>({});
   const editing = Boolean(property);
+
+  useEffect(() => () => postalLookupController.current?.abort(), []);
+
+  async function lookupPostalCode(input: HTMLInputElement) {
+    const postalCode = digitsOnly(input.value);
+    if (postalCode.length !== 8 || validateBrazilianPostalCode(input.value)) {
+      postalLookupController.current?.abort();
+      lastPostalLookup.current = "";
+      setPostalLookupStatus("");
+      return;
+    }
+    if (lastPostalLookup.current === postalCode) return;
+
+    postalLookupController.current?.abort();
+    const controller = new AbortController();
+    postalLookupController.current = controller;
+    lastPostalLookup.current = postalCode;
+    setPostalLookupStatus("Consultando CEP...");
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${postalCode}/json/`, { signal: controller.signal });
+      if (!response.ok) throw new Error("Falha na consulta");
+      const payload: unknown = await response.json();
+      if (!payload || typeof payload !== "object") throw new Error("Resposta inválida");
+      const result = payload as { erro?: boolean | string; logradouro?: unknown; bairro?: unknown; localidade?: unknown; uf?: unknown };
+      if (controller.signal.aborted || postalLookupController.current !== controller) return;
+      if (result.erro) {
+        lastPostalLookup.current = "";
+        setPostalLookupStatus("CEP não encontrado. Você pode preencher o endereço manualmente.");
+        return;
+      }
+
+      const form = input.form;
+      const addressFields: Record<string, string> = {
+        street: typeof result.logradouro === "string" ? result.logradouro : "",
+        neighborhood: typeof result.bairro === "string" ? result.bairro : "",
+        city: typeof result.localidade === "string" ? result.localidade : "",
+        state: typeof result.uf === "string" ? result.uf : "",
+      };
+      for (const [name, value] of Object.entries(addressFields)) {
+        const field = form?.elements.namedItem(name);
+        if (field instanceof HTMLInputElement && value && (!field.value || field.value === lastPostalAddress.current[name])) {
+          field.value = value;
+        }
+      }
+      lastPostalAddress.current = addressFields;
+      setPostalLookupStatus(Object.values(addressFields).some(Boolean)
+        ? "Endereço preenchido pelo CEP. Confira os dados; você pode editá-los."
+        : "Não encontramos dados de endereço para este CEP. Você pode preencher manualmente.");
+    } catch {
+      if (controller.signal.aborted || postalLookupController.current !== controller) return;
+      lastPostalLookup.current = "";
+      setPostalLookupStatus("Não foi possível consultar agora. Você pode preencher o endereço manualmente.");
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError("");
+    setFieldErrors({});
+    const formData = new FormData(event.currentTarget);
+    const validationErrors = validatePropertyFormData(formData, property?.postal_code);
+    if (Object.keys(validationErrors).length) {
+      setFieldErrors(validationErrors);
+      setError("Corrija os campos destacados antes de salvar.");
+      const firstInvalid = Object.keys(validationErrors)[0];
+      (event.currentTarget.elements.namedItem(firstInvalid) as HTMLElement | null)?.focus();
+      setBusy(false); return;
+    }
     const files = Array.from(fileInput.current?.files ?? []);
     const documentFiles = Array.from(documentInput.current?.files ?? []);
     if (photos.length + files.length > 8) {
@@ -67,7 +139,7 @@ export function PropertyForm({ property, photos: initialPhotos, documents: initi
       return;
     }
 
-    const result = await saveProperty(new FormData(event.currentTarget));
+    const result = await saveProperty(formData);
     if (!result.ok) { setError(result.error); setBusy(false); return; }
 
     const id = result.id!;
@@ -168,8 +240,17 @@ export function PropertyForm({ property, photos: initialPhotos, documents: initi
     setBusy(false);
   }
 
-  function fieldInput(name: string, title: string, value?: string | number | null, options: { type?: string; required?: boolean; min?: string; step?: string; placeholder?: string } = {}) {
-    return <label className={label}>{title}<input className={field} name={name} type={options.type ?? "text"} defaultValue={value ?? ""} required={options.required} min={options.min} step={options.step} placeholder={options.placeholder} /></label>;
+  function fieldInput(name: string, title: string, value?: string | number | null, options: { type?: string; required?: boolean; min?: string; step?: string; placeholder?: string; format?: FieldFormat; inputMode?: "numeric" | "decimal" | "tel"; maxLength?: number } = {}) {
+    const message = fieldErrors[name];
+    const errorId = `${name}-error`;
+    const inputProps = {
+      className: field, name, required: options.required, min: options.min, step: options.step,
+      placeholder: options.placeholder, maxLength: options.maxLength,
+      "aria-invalid": Boolean(message), "aria-describedby": message ? errorId : undefined,
+    };
+    return <label className={label}>{title}{options.format
+      ? <FormattedInput {...inputProps} format={options.format} inputMode={options.inputMode} defaultValue={value} />
+      : <input {...inputProps} type={options.type ?? "text"} inputMode={options.inputMode} defaultValue={value ?? ""} />}<FieldError id={errorId} message={message}/></label>;
   }
   function select(name: string, title: string, options: string[][], selected?: string) {
     return <label className={label}>{title}<select className={field} name={name} defaultValue={selected ?? options[0][0]}>{options.map(([value,text]) => <option key={value} value={value}>{text}</option>)}</select></label>;
@@ -196,25 +277,25 @@ export function PropertyForm({ property, photos: initialPhotos, documents: initi
     <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6">
       <h2 className="text-lg font-semibold">Endereço</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {fieldInput("postal_code","CEP",property?.postal_code)}
+        <label className={label}>CEP<FormattedInput name="postal_code" format="cep" inputMode="numeric" className={field} defaultValue={property?.postal_code} placeholder="00000-000" aria-invalid={Boolean(fieldErrors.postal_code)} aria-describedby={fieldErrors.postal_code ? "postal_code-error" : "postal-code-status"} onChange={(event: ChangeEvent<HTMLInputElement>)=>void lookupPostalCode(event.currentTarget)}/><FieldError id="postal_code-error" message={fieldErrors.postal_code}/><span id="postal-code-status" role="status" aria-live="polite" className="mt-1 block text-xs text-[var(--muted)]">{postalLookupStatus}</span></label>
         {fieldInput("street","Logradouro",property?.street)}
         {fieldInput("street_number","Número",property?.street_number)}
         {fieldInput("complement","Complemento",property?.complement)}
         {fieldInput("neighborhood","Bairro",property?.neighborhood)}
         {fieldInput("city","Cidade",property?.city)}
-        {fieldInput("state","UF",property?.state)}
+        {fieldInput("state","UF",property?.state,{placeholder:"SP"})}
       </div>
     </section>
 
     <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6">
       <h2 className="text-lg font-semibold">Valores e características</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {fieldInput("sale_price","Valor de venda (R$)",property?.sale_price,{type:"number",min:"0",step:"0.01"})}
-        {fieldInput("rent_price","Valor do aluguel (R$)",property?.rent_price,{type:"number",min:"0",step:"0.01"})}
-        {fieldInput("condo_fee","Condomínio (R$)",property?.condo_fee,{type:"number",min:"0",step:"0.01"})}
-        {fieldInput("property_tax","IPTU (R$)",property?.property_tax,{type:"number",min:"0",step:"0.01"})}
-        {fieldInput("total_area","Área total (m²)",property?.total_area,{type:"number",min:"0",step:"0.01"})}
-        {fieldInput("built_area","Área construída (m²)",property?.built_area,{type:"number",min:"0",step:"0.01"})}
+        {fieldInput("sale_price","Valor de venda (R$)",property?.sale_price,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 850.000,00"})}
+        {fieldInput("rent_price","Valor do aluguel (R$)",property?.rent_price,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 3.500,00"})}
+        {fieldInput("condo_fee","Condomínio (R$)",property?.condo_fee,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 650,00"})}
+        {fieldInput("property_tax","IPTU (R$)",property?.property_tax,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 1.200,00"})}
+        {fieldInput("total_area","Área total (m²)",property?.total_area,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 120,00"})}
+        {fieldInput("built_area","Área construída (m²)",property?.built_area,{format:"decimal",inputMode:"decimal",placeholder:"Ex.: 95,50"})}
         {fieldInput("bedrooms","Quartos",property?.bedrooms,{type:"number",min:"0",step:"1"})}
         {fieldInput("suites","Suítes",property?.suites,{type:"number",min:"0",step:"1"})}
         {fieldInput("bathrooms","Banheiros",property?.bathrooms,{type:"number",min:"0",step:"1"})}

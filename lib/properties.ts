@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { digitsOnly, parseBrazilianDecimal, validatePropertyFormData } from "@/lib/form-validation";
 
 type ActionResult = { ok: true; id?: string } | { ok: false; error: string };
 
@@ -18,8 +19,8 @@ function text(form: FormData, name: string) {
 function numberOrNull(form: FormData, name: string) {
   const raw = text(form, name);
   if (!raw) return null;
-  const value = Number(raw);
-  return Number.isFinite(value) && value >= 0 ? value : NaN;
+  const value = parseBrazilianDecimal(raw);
+  return typeof value === "number" && Number.isFinite(value) && value >= 0 ? value : NaN;
 }
 
 export async function saveProperty(form: FormData): Promise<ActionResult> {
@@ -29,6 +30,15 @@ export async function saveProperty(form: FormData): Promise<ActionResult> {
   const propertyType = text(form, "property_type"), purpose = text(form, "purpose"), status = text(form, "status");
   const ownerClientId = text(form, "owner_client_id") || null;
   const assignedAgent = access.isAdmin ? text(form, "assigned_agent") || access.userId : access.userId;
+  let existingProperty: { created_by: string; postal_code: string | null } | null = null;
+  if (id) {
+    const { data: existing, error: existingError } = await access.supabase.from("properties").select("created_by,postal_code").eq("id", id).maybeSingle();
+    if (existingError || !existing) return { ok: false, error: "Imóvel não encontrado." };
+    if (!access.isAdmin && existing.created_by !== access.userId) return { ok: false, error: "Você só pode editar imóveis que cadastrou." };
+    existingProperty = existing;
+  }
+  const fieldErrors = validatePropertyFormData(form, existingProperty?.postal_code);
+  if (Object.keys(fieldErrors).length) return { ok: false, error: Object.values(fieldErrors)[0] };
   if (!title) return { ok: false, error: "Preencha o título do imóvel." };
   if (!["casa","apartamento","terreno","comercial","rural"].includes(propertyType)) return { ok: false, error: "Selecione um tipo de imóvel válido." };
   if (!["venda","aluguel","ambos"].includes(purpose)) return { ok: false, error: "Selecione uma finalidade válida." };
@@ -49,7 +59,10 @@ export async function saveProperty(form: FormData): Promise<ActionResult> {
   const payload = {
     title, description: text(form,"description") || null,
     property_type: propertyType, purpose, status,
-    postal_code: text(form,"postal_code") || null, street: text(form,"street") || null,
+    postal_code: existingProperty && digitsOnly(text(form, "postal_code")) === digitsOnly(existingProperty.postal_code ?? "")
+      ? existingProperty.postal_code
+      : digitsOnly(text(form, "postal_code")) || null,
+    street: text(form,"street") || null,
     street_number: text(form,"street_number") || null, complement: text(form,"complement") || null,
     neighborhood: text(form,"neighborhood") || null, city: text(form,"city") || null,
     state: text(form,"state").toUpperCase() || null,
@@ -59,9 +72,6 @@ export async function saveProperty(form: FormData): Promise<ActionResult> {
     parking_spaces: numbers.parking_spaces, owner_client_id: ownerClientId, assigned_agent: assignedAgent,
   };
   if (id) {
-    const { data: existing } = await access.supabase.from("properties").select("created_by").eq("id",id).single();
-    if (!existing) return { ok:false,error:"Imóvel não encontrado." };
-    if (!access.isAdmin && existing.created_by !== access.userId) return { ok:false,error:"Você só pode editar imóveis que cadastrou." };
     const { error } = await access.supabase.from("properties").update(payload).eq("id",id);
     if (error) return { ok:false,error:error.code==="23505"?"Já existe um imóvel com esse código interno.":"Não foi possível salvar. Confira os campos e tente novamente." };
     return { ok:true,id };

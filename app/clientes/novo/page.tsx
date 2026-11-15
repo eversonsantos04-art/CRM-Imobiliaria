@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/app-header";
+import { FieldError, FormattedInput } from "@/components/form-inputs";
 import { createClient } from "@/lib/supabase/client";
+import { normalizeBrazilianDocument, normalizeBrazilianPhone, parseBrazilianDecimal, validateBrazilianDocument, validateBrazilianPhone, type FormFieldErrors } from "@/lib/form-validation";
 
 type Agent = { id: string; full_name: string | null };
 const field = "mt-1 w-full rounded-xl border border-[var(--line)] bg-white px-3 py-2.5 text-sm outline-none focus:border-[var(--green)]";
@@ -20,6 +22,7 @@ export default function NewClientPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FormFieldErrors>({});
 
   useEffect(() => {
     let active = true;
@@ -49,21 +52,55 @@ export default function NewClientPage() {
     event.preventDefault(); setSaving(true); setError("");
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
-    const documentNumber = String(form.get("document_number") ?? "").trim().replace(/[^0-9]/g, "") || null;
+    const documentRaw = String(form.get("document_number") ?? "").trim();
+    const documentNumber = normalizeBrazilianDocument(documentRaw) || null;
+    const phoneRaw = String(form.get("phone") ?? "").trim();
+    const whatsappRaw = String(form.get("whatsapp") ?? "").trim();
     const incomeText = String(form.get("income") ?? "").trim();
-    const income = incomeText ? Number(incomeText) : null;
+    const income = parseBrazilianDecimal(incomeText);
     const selectedRoles = form.getAll("roles").map(String).filter(value => roles.some(([role]) => role === value));
     const assignedAgent = isAdmin ? String(form.get("assigned_agent") || userId) : userId;
-    if (!name) { setError("Informe o nome do cliente."); setSaving(false); return; }
-    if (income !== null && (!Number.isFinite(income) || income < 0)) { setError("A renda deve ser um valor igual ou maior que zero."); setSaving(false); return; }
-    if (!selectedRoles.length) { setError("Selecione pelo menos um papel para o cliente."); setSaving(false); return; }
+    const errors: FormFieldErrors = {};
+    const documentError = validateBrazilianDocument(documentRaw);
+    const phoneError = validateBrazilianPhone(phoneRaw);
+    const whatsappError = validateBrazilianPhone(whatsappRaw);
+    if (!name) errors.name = "Informe o nome do cliente.";
+    if (documentError) errors.document_number = documentError;
+    if (phoneError) errors.phone = phoneError;
+    if (whatsappError) errors.whatsapp = whatsappError;
+    if (Number.isNaN(income)) errors.income = "Informe uma renda válida, com até duas casas decimais.";
+    else if (typeof income === "number" && income < 0) errors.income = "A renda deve ser igual ou maior que zero.";
+
+    const interestType = String(form.get("interest_type") ?? "");
+    const interestPurpose = String(form.get("interest_purpose") ?? "");
+    const minPriceText = String(form.get("interest_min_price") ?? "").trim();
+    const maxPriceText = String(form.get("interest_max_price") ?? "").trim();
+    const bedroomText = String(form.get("interest_min_bedrooms") ?? "").trim();
+    const minPrice = parseBrazilianDecimal(minPriceText);
+    const maxPrice = parseBrazilianDecimal(maxPriceText);
+    const minBedrooms = bedroomText ? Number(bedroomText) : null;
+    const neighborhoods = String(form.get("interest_neighborhoods") ?? "").split(",").map(value => value.trim()).filter(Boolean);
+    const hasInterest = Boolean(interestType || interestPurpose || minPriceText || maxPriceText || bedroomText || neighborhoods.length);
+    if (Number.isNaN(minPrice)) errors.interest_min_price = "Informe um valor mínimo válido, com até duas casas decimais.";
+    else if (typeof minPrice === "number" && minPrice < 0) errors.interest_min_price = "O preço mínimo deve ser igual ou maior que zero.";
+    if (Number.isNaN(maxPrice)) errors.interest_max_price = "Informe um valor máximo válido, com até duas casas decimais.";
+    else if (typeof maxPrice === "number" && maxPrice < 0) errors.interest_max_price = "O preço máximo deve ser igual ou maior que zero.";
+    if (minBedrooms !== null && (!Number.isInteger(minBedrooms) || minBedrooms < 0)) errors.interest_min_bedrooms = "Informe um número inteiro de quartos igual ou maior que zero.";
+    if (typeof minPrice === "number" && typeof maxPrice === "number" && minPrice > maxPrice) errors.interest_min_price = "O preço mínimo não pode superar o máximo.";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length || !selectedRoles.length) {
+      setError(!selectedRoles.length ? "Selecione pelo menos um papel para o cliente." : "Corrija os campos destacados antes de salvar.");
+      const firstInvalid = Object.keys(errors)[0];
+      if (firstInvalid) (event.currentTarget.elements.namedItem(firstInvalid) as HTMLElement | null)?.focus();
+      setSaving(false); return;
+    }
 
     const supabase = createClient();
     const consent = form.get("consent") === "on";
     const clientPayload = {
       name, document_number: documentNumber,
-      phone: String(form.get("phone") ?? "").trim() || null,
-      whatsapp: String(form.get("whatsapp") ?? "").trim() || null,
+      phone: phoneRaw ? normalizeBrazilianPhone(phoneRaw) : null,
+      whatsapp: whatsappRaw ? normalizeBrazilianPhone(whatsappRaw) : null,
       email: String(form.get("email") ?? "").trim() || null,
       address: String(form.get("address") ?? "").trim() || null,
       income, contact_source: String(form.get("contact_source") ?? "").trim() || null,
@@ -84,23 +121,7 @@ export default function NewClientPage() {
       setSaving(false); return;
     }
 
-    const interestType = String(form.get("interest_type") ?? "");
-    const interestPurpose = String(form.get("interest_purpose") ?? "");
-    const minPriceText = String(form.get("interest_min_price") ?? "").trim();
-    const maxPriceText = String(form.get("interest_max_price") ?? "").trim();
-    const bedroomText = String(form.get("interest_min_bedrooms") ?? "").trim();
-    const neighborhoods = String(form.get("interest_neighborhoods") ?? "").split(",").map(value => value.trim()).filter(Boolean);
-    const hasInterest = Boolean(interestType || interestPurpose || minPriceText || maxPriceText || bedroomText || neighborhoods.length);
     if (hasInterest) {
-      const minPrice = minPriceText ? Number(minPriceText) : null;
-      const maxPrice = maxPriceText ? Number(maxPriceText) : null;
-      const minBedrooms = bedroomText ? Number(bedroomText) : null;
-      if ((minPrice !== null && (!Number.isFinite(minPrice) || minPrice < 0)) || (maxPrice !== null && (!Number.isFinite(maxPrice) || maxPrice < 0)) || (minBedrooms !== null && (!Number.isInteger(minBedrooms) || minBedrooms < 0))) {
-        setError("Cliente e papéis foram salvos, mas confira os valores do perfil de interesse."); setSaving(false); return;
-      }
-      if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
-        setError("Cliente e papéis foram salvos, mas o preço mínimo do interesse supera o máximo."); setSaving(false); return;
-      }
       const { data: interest, error: interestError } = await supabase.from("client_interests").insert({
         client_id: client.id,
         property_type: propertyTypes.some(([type]) => type === interestType) ? interestType : null,
@@ -128,12 +149,12 @@ export default function NewClientPage() {
       : error && !userId ? <p role="alert" className="mt-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p>
       : <form onSubmit={submit} className="mt-6 space-y-5">
         <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6"><h2 className="text-lg font-semibold">Dados do cliente</h2><div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className={label}>Nome completo<input required name="name" className={field} autoComplete="name"/></label>
-          <label className={label}>CPF/CNPJ<input name="document_number" inputMode="numeric" className={field} placeholder="Somente números"/></label>
-          <label className={label}>Telefone<input name="phone" type="tel" className={field} autoComplete="tel"/></label>
-          <label className={label}>WhatsApp<input name="whatsapp" type="tel" className={field} placeholder="Com DDD"/></label>
+          <label className={label}>Nome completo<input required name="name" className={field} autoComplete="name" aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name ? "name-error" : undefined}/><FieldError id="name-error" message={fieldErrors.name}/></label>
+          <label className={label}>CPF/CNPJ<FormattedInput name="document_number" format="cpf-cnpj" inputMode="text" autoCapitalize="characters" className={field} placeholder="000.000.000-00 ou 00.ABC.123/01DE-35" aria-invalid={Boolean(fieldErrors.document_number)} aria-describedby={fieldErrors.document_number ? "document_number-error" : undefined}/><FieldError id="document_number-error" message={fieldErrors.document_number}/></label>
+          <label className={label}>Telefone<FormattedInput name="phone" format="phone" type="tel" inputMode="tel" autoComplete="tel" className={field} placeholder="(11) 3333-4444" aria-invalid={Boolean(fieldErrors.phone)} aria-describedby={fieldErrors.phone ? "phone-error" : undefined}/><FieldError id="phone-error" message={fieldErrors.phone}/></label>
+          <label className={label}>WhatsApp<FormattedInput name="whatsapp" format="phone" type="tel" inputMode="tel" autoComplete="tel" className={field} placeholder="(11) 99999-9999" aria-invalid={Boolean(fieldErrors.whatsapp)} aria-describedby={fieldErrors.whatsapp ? "whatsapp-error" : undefined}/><FieldError id="whatsapp-error" message={fieldErrors.whatsapp}/></label>
           <label className={label}>E-mail<input name="email" type="email" className={field} autoComplete="email"/></label>
-          <label className={label}>Renda mensal (opcional)<input name="income" type="number" min="0" step="0.01" className={field}/></label>
+          <label className={label}>Renda mensal (opcional)<FormattedInput name="income" format="decimal" inputMode="decimal" className={field} placeholder="Ex.: 5.500,00" aria-invalid={Boolean(fieldErrors.income)} aria-describedby={fieldErrors.income ? "income-error" : undefined}/><FieldError id="income-error" message={fieldErrors.income}/></label>
           <label className={label + " sm:col-span-2"}>Endereço<input name="address" className={field} autoComplete="street-address"/></label>
           <label className={label}>Origem do contato<input name="contact_source" className={field} placeholder="Ex.: indicação, site, anúncio"/></label>
           {isAdmin&&<label className={label}>Corretor responsável<select name="assigned_agent" className={field} defaultValue={userId}>{agents.map(item=><option key={item.id} value={item.id}>{item.full_name||"Corretor"}</option>)}</select></label>}
@@ -145,9 +166,9 @@ export default function NewClientPage() {
         <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6"><h2 className="text-lg font-semibold">Perfil de interesse</h2><p className="mt-1 text-sm text-[var(--muted)]">Opcional. Ajuda a encontrar imóveis compatíveis.</p><div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className={label}>Tipo de imóvel<select name="interest_type" className={field}><option value="">Não informado</option>{propertyTypes.map(([value,title])=><option key={value} value={value}>{title}</option>)}</select></label>
           <label className={label}>Finalidade<select name="interest_purpose" className={field}><option value="">Não informada</option><option value="venda">Compra</option><option value="aluguel">Aluguel</option><option value="ambos">Venda e aluguel</option></select></label>
-          <label className={label}>Preço mínimo<input name="interest_min_price" type="number" min="0" step="0.01" className={field}/></label>
-          <label className={label}>Preço máximo<input name="interest_max_price" type="number" min="0" step="0.01" className={field}/></label>
-          <label className={label}>Quartos mínimos<input name="interest_min_bedrooms" type="number" min="0" step="1" className={field}/></label>
+          <label className={label}>Preço mínimo<FormattedInput name="interest_min_price" format="decimal" inputMode="decimal" className={field} placeholder="Ex.: 250.000,00" aria-invalid={Boolean(fieldErrors.interest_min_price)} aria-describedby={fieldErrors.interest_min_price ? "interest_min_price-error" : undefined}/><FieldError id="interest_min_price-error" message={fieldErrors.interest_min_price}/></label>
+          <label className={label}>Preço máximo<FormattedInput name="interest_max_price" format="decimal" inputMode="decimal" className={field} placeholder="Ex.: 500.000,00" aria-invalid={Boolean(fieldErrors.interest_max_price)} aria-describedby={fieldErrors.interest_max_price ? "interest_max_price-error" : undefined}/><FieldError id="interest_max_price-error" message={fieldErrors.interest_max_price}/></label>
+          <label className={label}>Quartos mínimos<input name="interest_min_bedrooms" type="number" min="0" step="1" className={field} aria-invalid={Boolean(fieldErrors.interest_min_bedrooms)} aria-describedby={fieldErrors.interest_min_bedrooms ? "interest_min_bedrooms-error" : undefined}/><FieldError id="interest_min_bedrooms-error" message={fieldErrors.interest_min_bedrooms}/></label>
           <label className={label}>Bairros de interesse<input name="interest_neighborhoods" className={field} placeholder="Separe vários bairros por vírgula"/></label>
         </div></section>
         <section className="rounded-2xl border border-[var(--line)] bg-white p-5 sm:p-6"><label className={label}>Observações<textarea name="notes" className={field + " min-h-28"}/></label></section>
