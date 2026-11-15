@@ -142,6 +142,7 @@ function ClientsContent() {
     {exportError&&<p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700">Falha ao exportar clientes: {exportError}</p>}
     {query.get("salvo")==="1"&&<p role="status" className="mt-5 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">Cliente cadastrado com sucesso.</p>}
     {query.get("atualizado")==="1"&&<p role="status" className="mt-5 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">Cliente atualizado com sucesso.</p>}
+    {query.get("excluido")==="1"&&<p role="status" className="mt-5 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">Cadastro do cliente excluído com sucesso.</p>}
     <form method="get" className="mt-6 grid gap-3 rounded-2xl border border-[var(--line)] bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="text-sm font-medium">Busca<input name="q" defaultValue={query.get("q") ?? ""} placeholder="Nome, CPF/CNPJ, telefone ou e-mail" className="mt-1 w-full rounded-xl border border-[var(--line)] px-3 py-2.5 text-sm"/></label>
       <label className="text-sm font-medium">Papel<select name="papel" defaultValue={role} className="mt-1 w-full rounded-xl border border-[var(--line)] bg-white px-3 py-2.5 text-sm"><option value="">Todos</option>{Object.entries(roleLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>

@@ -57,3 +57,5 @@ Para conectar a vitrine do site aos imóveis disponíveis, consulte [integraçã
 
 Para habilitar anonimização LGPD, execute uma vez `outputs/005_lgpd_anonymize_client.sql` no SQL Editor do Supabase. Na ficha do cliente, o admin verá **Anonimizar dados**. A ação limpa os dados de contato e observações, remove papéis, interesses e lembretes, apaga o vínculo do proprietário nos imóveis e retira dos logs os valores pessoais anteriores, mantendo um evento genérico de anonimização. O histórico de contatos conserva tipo e data, mas remove as anotações. A ação não pode ser desfeita.
 
+Para habilitar a exclusão definitiva de clientes pelo admin, execute uma vez `outputs/007_delete_client_data.sql` no SQL Editor do Supabase. Na ficha do cliente, **Excluir cadastro** remove o cliente, papéis, interesses, histórico e lembretes; imóveis permanecem cadastrados, sem o vínculo de proprietário. O log conserva apenas um evento genérico de exclusão, sem dados pessoais. A operação é irreversível.
+
