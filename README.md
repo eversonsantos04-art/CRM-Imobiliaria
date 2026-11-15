@@ -2,6 +2,8 @@
 
 Painel CRM em Next.js, TypeScript, Tailwind CSS e Supabase.
 
+Consulte a [documentação completa do projeto](docs/documentacao-do-projeto.md) para conhecer a arquitetura, as rotas, as permissões, o banco de dados e os procedimentos de desenvolvimento e publicação.
+
 ## Configuração local
 
 1. Instale Node.js 20.9 ou superior.
