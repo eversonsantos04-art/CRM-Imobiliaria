@@ -13,8 +13,8 @@ const roleNames: Record<string,string> = { admin: "Administrador", corretor: "Co
 const navItems: NavItem[] = [
   { href: "/dashboard", label: "Visão geral", icon: "home" },
   { href: "/agenda", label: "Agenda", icon: "agenda" },
-  { href: "/imoveis", label: "Imóveis", icon: "properties" },
   { href: "/clientes", label: "Clientes", icon: "clients" },
+  { href: "/imoveis", label: "Imóveis", icon: "properties" },
   { href: "/importar", label: "Importar dados", icon: "import" },
   { href: "/usuarios", label: "Usuários", icon: "users" },
   { href: "/auditoria", label: "Auditoria", icon: "audit" },

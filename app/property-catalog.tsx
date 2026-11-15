@@ -18,6 +18,25 @@ const purposeLabels: Record<string, string> = {
   ambos: "Venda e locação",
 };
 
+type CatalogFilters = {
+  search: string;
+  purpose: string;
+  type: string;
+  city: string;
+  minimumPrice: string;
+  maximumPrice: string;
+  minimumBedrooms: string;
+  sort: string;
+};
+
+const emptyFilters: CatalogFilters = {
+  search: "", purpose: "", type: "", city: "", minimumPrice: "", maximumPrice: "", minimumBedrooms: "", sort: "recent",
+};
+
+function hasCatalogFilters(filters: CatalogFilters) {
+  return Boolean(filters.search || filters.purpose || filters.type || filters.city || filters.minimumPrice || filters.maximumPrice || filters.minimumBedrooms || filters.sort !== "recent");
+}
+
 const money = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
@@ -81,14 +100,8 @@ function PropertyCard({ property }: { property: PublicPropertyCard }) {
 }
 
 export function PropertyCatalog({ properties, connected }: { properties: PublicPropertyCard[]; connected: boolean }) {
-  const [search, setSearch] = useState("");
-  const [purpose, setPurpose] = useState("");
-  const [type, setType] = useState("");
-  const [city, setCity] = useState("");
-  const [minimumPrice, setMinimumPrice] = useState("");
-  const [maximumPrice, setMaximumPrice] = useState("");
-  const [minimumBedrooms, setMinimumBedrooms] = useState("");
-  const [sort, setSort] = useState("recent");
+  const [filters, setFilters] = useState<CatalogFilters>(emptyFilters);
+  const [appliedFilters, setAppliedFilters] = useState<CatalogFilters>(emptyFilters);
 
   const cities = useMemo(
     () => [...new Set(properties.map((property) => property.city).filter((value): value is string => Boolean(value)))].sort(),
@@ -96,65 +109,61 @@ export function PropertyCatalog({ properties, connected }: { properties: PublicP
   );
 
   const filtered = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase("pt-BR");
-    const minimum = minimumPrice === "" ? null : Number(minimumPrice);
-    const maximum = maximumPrice === "" ? null : Number(maximumPrice);
-    const minimumBeds = minimumBedrooms === "" ? null : Number(minimumBedrooms);
+    const query = appliedFilters.search.trim().toLocaleLowerCase("pt-BR");
+    const minimum = appliedFilters.minimumPrice === "" ? null : Number(appliedFilters.minimumPrice);
+    const maximum = appliedFilters.maximumPrice === "" ? null : Number(appliedFilters.maximumPrice);
+    const minimumBeds = appliedFilters.minimumBedrooms === "" ? null : Number(appliedFilters.minimumBedrooms);
     const matches = properties.filter((property) => {
       const haystack = [property.title, property.internal_code, property.neighborhood, property.city, property.state]
         .filter(Boolean).join(" ").toLocaleLowerCase("pt-BR");
-      const matchesPurpose = !purpose || property.purpose === purpose || property.purpose === "ambos";
+      const matchesPurpose = !appliedFilters.purpose || property.purpose === appliedFilters.purpose || property.purpose === "ambos";
       const price = mainPrice(property);
       return matchesPurpose
-        && (!type || property.property_type === type)
-        && (!city || property.city === city)
+        && (!appliedFilters.type || property.property_type === appliedFilters.type)
+        && (!appliedFilters.city || property.city === appliedFilters.city)
         && (!query || haystack.includes(query))
         && (minimum === null || (price !== null && price >= minimum))
         && (maximum === null || (price !== null && price <= maximum))
         && (minimumBeds === null || (property.bedrooms !== null && property.bedrooms >= minimumBeds));
     });
 
-    if (sort === "price-low") return matches.sort((a, b) => (mainPrice(a) ?? Number.MAX_VALUE) - (mainPrice(b) ?? Number.MAX_VALUE));
-    if (sort === "price-high") return matches.sort((a, b) => (mainPrice(b) ?? -1) - (mainPrice(a) ?? -1));
-    if (sort === "area") return matches.sort((a, b) => (b.built_area ?? b.total_area ?? 0) - (a.built_area ?? a.total_area ?? 0));
+    if (appliedFilters.sort === "price-low") return matches.sort((a, b) => (mainPrice(a) ?? Number.MAX_VALUE) - (mainPrice(b) ?? Number.MAX_VALUE));
+    if (appliedFilters.sort === "price-high") return matches.sort((a, b) => (mainPrice(b) ?? -1) - (mainPrice(a) ?? -1));
+    if (appliedFilters.sort === "area") return matches.sort((a, b) => (b.built_area ?? b.total_area ?? 0) - (a.built_area ?? a.total_area ?? 0));
     return matches.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
-  }, [city, maximumPrice, minimumBedrooms, minimumPrice, properties, purpose, search, sort, type]);
+  }, [appliedFilters, properties]);
 
   function resetFilters() {
-    setSearch("");
-    setPurpose("");
-    setType("");
-    setCity("");
-    setMinimumPrice("");
-    setMaximumPrice("");
-    setMinimumBedrooms("");
-    setSort("recent");
+    setFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
   }
 
-  const hasFilters = Boolean(search || purpose || type || city || minimumPrice || maximumPrice || minimumBedrooms || sort !== "recent");
+  const hasFilters = hasCatalogFilters(filters) || hasCatalogFilters(appliedFilters);
 
   return (
     <section className="estate-listings" id="imoveis">
       <div className="estate-container">
         <div className="estate-section-heading">
           <div><span className="estate-eyebrow">Uma boa escolha começa aqui</span><h2>Imóveis em destaque</h2><p>Encontre um espaço que combine com a vida que você quer viver.</p></div>
-          <span className="estate-results-count">{filtered.length} {filtered.length === 1 ? "imóvel" : "imóveis"}</span>
+          <div className="estate-section-heading__tools">{hasFilters && <button className="estate-clear-filters" type="button" onClick={resetFilters}>Limpar filtros</button>}<span className="estate-results-count">{filtered.length} {filtered.length === 1 ? "imóvel" : "imóveis"}</span></div>
         </div>
 
-        <div className="estate-filters" role="search" aria-label="Filtrar imóveis">
-          <label className="estate-search-field"><span className="sr-only">Buscar por imóvel, bairro ou cidade</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8.8" cy="8.8" r="5.8"/><path d="m13 13 4 4"/></svg><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar imóvel, bairro ou cidade" /></label>
-          <label><span className="sr-only">Tipo de negócio</span><select value={purpose} onChange={(event) => setPurpose(event.target.value)}><option value="">Comprar ou alugar</option><option value="venda">Comprar</option><option value="aluguel">Alugar</option></select></label>
-          <label><span className="sr-only">Tipo de imóvel</span><select value={type} onChange={(event) => setType(event.target.value)}><option value="">Todos os tipos</option>{Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-          <label><span className="sr-only">Cidade</span><select value={city} onChange={(event) => setCity(event.target.value)}><option value="">Todas as cidades</option>{cities.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
-          {hasFilters && <button className="estate-reset" type="button" onClick={resetFilters}>Limpar</button>}
+        <form className="estate-search-form" role="search" aria-label="Filtrar imóveis" onSubmit={(event) => { event.preventDefault(); setAppliedFilters({ ...filters }); }}>
+        <div className="estate-filters">
+          <label className="estate-search-field"><span className="sr-only">Buscar por imóvel, bairro ou cidade</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8.8" cy="8.8" r="5.8"/><path d="m13 13 4 4"/></svg><input value={filters.search} onChange={(event) => setFilters({ ...filters, search: event.target.value })} placeholder="Buscar imóvel, bairro ou cidade" /></label>
+          <label><span className="estate-filter-caption">Operação</span><select aria-label="Tipo de negócio" value={filters.purpose} onChange={(event) => setFilters({ ...filters, purpose: event.target.value })}><option value="">Comprar ou alugar</option><option value="venda">Comprar</option><option value="aluguel">Alugar</option></select></label>
+          <label><span className="estate-filter-caption">Tipo de imóvel</span><select aria-label="Tipo de imóvel" value={filters.type} onChange={(event) => setFilters({ ...filters, type: event.target.value })}><option value="">Todos os tipos</option>{Object.entries(typeLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+          <label><span className="estate-filter-caption">Cidade</span><select aria-label="Cidade" value={filters.city} onChange={(event) => setFilters({ ...filters, city: event.target.value })}><option value="">Todas as cidades</option>{cities.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
         </div>
 
         <div className="estate-filters__advanced" aria-label="Filtros adicionais">
-          <label><span className="sr-only">Preço mínimo em reais</span><input type="number" min="0" inputMode="numeric" value={minimumPrice} onChange={(event) => setMinimumPrice(event.target.value)} placeholder="Preço mínimo" /></label>
-          <label><span className="sr-only">Preço máximo em reais</span><input type="number" min="0" inputMode="numeric" value={maximumPrice} onChange={(event) => setMaximumPrice(event.target.value)} placeholder="Preço máximo" /></label>
-          <label><span className="sr-only">Quantidade mínima de quartos</span><select value={minimumBedrooms} onChange={(event) => setMinimumBedrooms(event.target.value)}><option value="">Quartos</option><option value="1">1 ou mais</option><option value="2">2 ou mais</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option></select></label>
-          <label><span className="sr-only">Ordenar imóveis</span><select value={sort} onChange={(event) => setSort(event.target.value)}><option value="recent">Mais recentes</option><option value="price-low">Menor preço</option><option value="price-high">Maior preço</option><option value="area">Maior área</option></select></label>
+          <label><span className="sr-only">Preço mínimo em reais</span><input type="number" min="0" inputMode="numeric" value={filters.minimumPrice} onChange={(event) => setFilters({ ...filters, minimumPrice: event.target.value })} placeholder="Preço mínimo" /></label>
+          <label><span className="sr-only">Preço máximo em reais</span><input type="number" min="0" inputMode="numeric" value={filters.maximumPrice} onChange={(event) => setFilters({ ...filters, maximumPrice: event.target.value })} placeholder="Preço máximo" /></label>
+          <label><span className="sr-only">Quantidade mínima de quartos</span><select value={filters.minimumBedrooms} onChange={(event) => setFilters({ ...filters, minimumBedrooms: event.target.value })}><option value="">Quartos</option><option value="1">1 ou mais</option><option value="2">2 ou mais</option><option value="3">3 ou mais</option><option value="4">4 ou mais</option></select></label>
+          <label><span className="sr-only">Ordenar imóveis</span><select value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.target.value })}><option value="recent">Mais recentes</option><option value="price-low">Menor preço</option><option value="price-high">Maior preço</option><option value="area">Maior área</option></select></label>
+          <button className="estate-search-submit" type="submit">Pesquisar imóveis</button>
         </div>
+        </form>
 
         {filtered.length > 0 ? (
           <div className="estate-grid">{filtered.map((property) => <PropertyCard key={property.id} property={property} />)}</div>

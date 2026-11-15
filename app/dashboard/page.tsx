@@ -130,7 +130,10 @@ export default function DashboardPage() {
     <div className="mx-auto max-w-6xl px-5 py-7 sm:px-7 sm:py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-[var(--green)]">Painel / Visão geral</p><h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Olá{profile.full_name ? `, ${profile.full_name}` : ""}.</h1><p className="mt-2 text-sm text-[var(--muted)]">Acompanhe os imóveis, clientes e próximos atendimentos.</p></div>
-        <Link href="/imoveis/novo" className="crm-primary-action">+ Cadastrar imóvel</Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/clientes/novo" className="crm-primary-action">+ Cadastrar cliente</Link>
+          <Link href="/imoveis/novo" className="crm-primary-action">+ Cadastrar imóvel</Link>
+        </div>
       </div>
 
       {metricsError && <p role="alert" className="mt-5 rounded-xl border border-amber-300/30 bg-amber-200/10 p-3 text-sm text-amber-100">{metricsError}</p>}
@@ -155,7 +158,7 @@ export default function DashboardPage() {
     </div>
 
     <section className="mx-auto grid max-w-6xl gap-4 px-5 pb-10 sm:grid-cols-2 sm:px-7 xl:grid-cols-4" aria-label="Indicadores da carteira">
-      {charts.map((group) => <article key={group.title} className="crm-dashboard-panel p-5"><h2 className="text-sm font-semibold">{group.title}</h2><ul className="mt-4 space-y-3">{group.items.map((item) => <li key={item.label} className="flex items-center justify-between gap-3 border-b border-[#302f28] pb-2 text-xs last:border-0 last:pb-0"><span className="crm-dashboard-muted">{item.label}</span><span className="font-semibold text-[#f1eee5]">{number(item.count)}</span></li>)}</ul></article>)}
+      {charts.map((group) => <article key={group.title} className="crm-dashboard-panel p-5"><h2 className="text-sm font-semibold">{group.title}</h2><ul className="mt-4 space-y-3">{group.items.map((item) => <li key={item.label} className="flex items-center justify-between gap-3 border-b border-[#302f28] pb-2 text-xs last:border-0 last:pb-0"><span className="font-semibold text-[#f1eee5]">{item.label}</span><span className="font-semibold text-[#f1eee5]">{number(item.count)}</span></li>)}</ul></article>)}
     </section>
   </main>;
 }
